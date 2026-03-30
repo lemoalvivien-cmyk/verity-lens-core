@@ -113,6 +113,63 @@ export type Database = {
           },
         ]
       }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      cities: {
+        Row: {
+          country: string
+          created_at: string
+          id: string
+          name: string
+          postal_code: string | null
+          region: string | null
+          slug: string
+        }
+        Insert: {
+          country?: string
+          created_at?: string
+          id?: string
+          name: string
+          postal_code?: string | null
+          region?: string | null
+          slug: string
+        }
+        Update: {
+          country?: string
+          created_at?: string
+          id?: string
+          name?: string
+          postal_code?: string | null
+          region?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
       evidence_snapshots: {
         Row: {
           captured_at: string
@@ -156,6 +213,179 @@ export type Database = {
             columns: ["monitor_id"]
             isOneToOne: false
             referencedRelation: "monitors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exports_log: {
+        Row: {
+          created_at: string
+          export_type: string
+          filters: Json | null
+          id: string
+          row_count: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          export_type?: string
+          filters?: Json | null
+          id?: string
+          row_count?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          export_type?: string
+          filters?: Json | null
+          id?: string
+          row_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lead_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          lead_id: string
+          metadata: Json | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          lead_id: string
+          metadata?: Json | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          lead_id?: string
+          metadata?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      lead_tags: {
+        Row: {
+          created_at: string
+          id: string
+          lead_id: string
+          tag_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          lead_id: string
+          tag_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          lead_id?: string
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lead_tags_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lead_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          category_id: string | null
+          category_name: string | null
+          city_id: string | null
+          city_name: string | null
+          consent: boolean
+          consent_text_version: string
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          message: string | null
+          notes_admin: string | null
+          phone: string | null
+          postal_code: string | null
+          source_campaign: string | null
+          source_page: string
+          status: Database["public"]["Enums"]["lead_status"]
+          updated_at: string
+        }
+        Insert: {
+          category_id?: string | null
+          category_name?: string | null
+          city_id?: string | null
+          city_name?: string | null
+          consent?: boolean
+          consent_text_version?: string
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          message?: string | null
+          notes_admin?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          source_campaign?: string | null
+          source_page?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string | null
+          category_name?: string | null
+          city_id?: string | null
+          city_name?: string | null
+          consent?: boolean
+          consent_text_version?: string
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          message?: string | null
+          notes_admin?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          source_campaign?: string | null
+          source_page?: string
+          status?: Database["public"]["Enums"]["lead_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
             referencedColumns: ["id"]
           },
         ]
@@ -353,6 +583,27 @@ export type Database = {
           },
         ]
       }
+      tags: {
+        Row: {
+          color: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          color?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       workspace_members: {
         Row: {
           id: string
@@ -426,6 +677,7 @@ export type Database = {
     Enums: {
       alert_severity: "info" | "warning" | "critical"
       diff_type: "added" | "removed" | "changed" | "semantic"
+      lead_status: "new" | "contacted" | "qualified" | "converted" | "archived"
       monitor_status: "active" | "paused" | "error"
       monitor_type: "ai_query" | "web_watch"
       workspace_role: "owner" | "admin" | "member" | "viewer"
@@ -558,6 +810,7 @@ export const Constants = {
     Enums: {
       alert_severity: ["info", "warning", "critical"],
       diff_type: ["added", "removed", "changed", "semantic"],
+      lead_status: ["new", "contacted", "qualified", "converted", "archived"],
       monitor_status: ["active", "paused", "error"],
       monitor_type: ["ai_query", "web_watch"],
       workspace_role: ["owner", "admin", "member", "viewer"],
