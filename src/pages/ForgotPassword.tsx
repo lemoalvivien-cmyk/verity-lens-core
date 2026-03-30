@@ -42,7 +42,7 @@ const ForgotPassword = () => {
         {sent ? (
           <div className="bg-card border border-border rounded-lg p-5 text-center">
             <p className="text-sm text-foreground">Email sent! Check your inbox.</p>
-            <Link to="/auth" className="font-mono text-xs text-muted-foreground hover:text-foreground mt-3 inline-block">
+            <Link to="/login" className="font-mono text-xs text-muted-foreground hover:text-foreground mt-3 inline-block">
               Back to sign in
             </Link>
           </div>
@@ -59,7 +59,7 @@ const ForgotPassword = () => {
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
               {loading ? "Sending..." : "Send reset link"}
             </Button>
-            <Link to="/auth" className="block text-center font-mono text-xs text-muted-foreground hover:text-foreground">
+            <Link to="/login" className="block text-center font-mono text-xs text-muted-foreground hover:text-foreground">
               Back to sign in
             </Link>
           </form>
