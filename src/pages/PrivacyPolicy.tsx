@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const sections = [
   {
     title: "1. Responsable du traitement",
-    content: "[NOM_ENTREPRISE] — [ADRESSE]\nContact DPO : [EMAIL_DPO]",
+    content: "VLM Consulting — Croix, 59170, France\nContact DPO : dpo@vlm-consulting.fr",
   },
   {
     title: "2. Finalité du traitement",
@@ -30,7 +30,7 @@ const sections = [
   {
     title: "6. Vos droits",
     content:
-      "Conformément au RGPD, vous disposez des droits suivants :\n• Droit d'accès à vos données\n• Droit de rectification\n• Droit à l'effacement (« droit à l'oubli »)\n• Droit à la portabilité des données\n• Droit d'opposition au traitement\n\nPour exercer ces droits, contactez-nous à l'adresse : [EMAIL_DPO]",
+      "Conformément au RGPD, vous disposez des droits suivants :\n• Droit d'accès à vos données\n• Droit de rectification\n• Droit à l'effacement (« droit à l'oubli »)\n• Droit à la portabilité des données\n• Droit d'opposition au traitement\n\nPour exercer ces droits, contactez-nous à l'adresse : dpo@vlm-consulting.fr",
   },
   {
     title: "7. Sécurité des données",
