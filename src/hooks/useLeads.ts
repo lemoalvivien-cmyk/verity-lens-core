@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { startOfWeek, startOfMonth, subDays, format } from "date-fns";
 
 export interface LeadFilters {
   city_id?: string;
@@ -9,6 +10,7 @@ export interface LeadFilters {
   date_from?: string;
   date_to?: string;
   tag_id?: string;
+  page?: number;
 }
 
 export function useLeads(filters?: LeadFilters) {
