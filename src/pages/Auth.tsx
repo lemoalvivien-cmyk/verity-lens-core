@@ -156,9 +156,9 @@ const Auth = () => {
           </div>
           {isLogin && (
             <div className="text-right">
-              <Link to="/forgot-password" className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
-                Forgot password?
-              </Link>
+               <Link to="/forgot-password" className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Mot de passe oublié ?
+               </Link>
             </div>
           )}
           <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
