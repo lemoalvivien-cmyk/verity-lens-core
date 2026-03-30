@@ -1,15 +1,11 @@
-import { GitCompare, ArrowLeft, Clock, Minus, Plus, Loader2 } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { GitCompare, Minus, Plus, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
 import { useDiffs } from "@/hooks/useData";
 import { formatDistanceToNow } from "date-fns";
 
 const DiffViewer = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
   const { data: diffs = [], isLoading } = useDiffs();
 
   if (isLoading) {
@@ -22,7 +18,6 @@ const DiffViewer = () => {
         title="Diffs"
         subtitle="What changed between snapshots"
         icon={<GitCompare className="w-4 h-4 text-signal-amber" />}
-        actions={<Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="font-mono text-xs gap-1.5 text-muted-foreground"><ArrowLeft className="w-3.5 h-3.5" /> Back</Button>}
       />
 
       {diffs.length === 0 ? (

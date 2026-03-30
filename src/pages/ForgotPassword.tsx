@@ -21,7 +21,7 @@ const ForgotPassword = () => {
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
       setSent(true);
     }
@@ -36,14 +36,14 @@ const ForgotPassword = () => {
               <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
-          <h2 className="font-mono text-sm text-muted-foreground">Réinitialiser le mot de passe</h2>
+          <h2 className="font-mono text-sm text-muted-foreground">Reset your password</h2>
         </div>
 
         {sent ? (
           <div className="bg-card border border-border rounded-lg p-5 text-center">
-            <p className="text-sm text-foreground">Email envoyé ! Vérifiez votre boîte de réception.</p>
+            <p className="text-sm text-foreground">Email sent! Check your inbox.</p>
             <Link to="/auth" className="font-mono text-xs text-muted-foreground hover:text-foreground mt-3 inline-block">
-              Retour à la connexion
+              Back to sign in
             </Link>
           </div>
         ) : (
@@ -57,10 +57,10 @@ const ForgotPassword = () => {
               </div>
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
-              {loading ? "Envoi..." : "Envoyer le lien"}
+              {loading ? "Sending..." : "Send reset link"}
             </Button>
             <Link to="/auth" className="block text-center font-mono text-xs text-muted-foreground hover:text-foreground">
-              Retour à la connexion
+              Back to sign in
             </Link>
           </form>
         )}
