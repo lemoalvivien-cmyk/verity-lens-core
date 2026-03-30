@@ -1,14 +1,17 @@
-import { useState } from "react";
-import { useCities } from "@/hooks/useLeads";
+import { useState, useMemo } from "react";
+import { Link } from "react-router-dom";
+import { useCities, useAllLeads } from "@/hooks/useLeads";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MapPin, Plus, Trash2, Loader2 } from "lucide-react";
+import { MapPin, Plus, Trash2, Loader2, Users, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { subDays } from "date-fns";
 
 const AdminCities = () => {
   const { data: cities = [], isLoading } = useCities();
+  const { data: leads = [] } = useAllLeads();
   const [name, setName] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [region, setRegion] = useState("");
@@ -16,24 +19,34 @@ const AdminCities = () => {
   const qc = useQueryClient();
   const { toast } = useToast();
 
+  const cityStats = useMemo(() => {
+    const sevenDaysAgo = subDays(new Date(), 7);
+    const map = new Map<string, { total: number; recent: number }>();
+    leads.forEach(l => {
+      if (!l.city_id) return;
+      if (!map.has(l.city_id)) map.set(l.city_id, { total: 0, recent: 0 });
+      const entry = map.get(l.city_id)!;
+      entry.total++;
+      if (new Date(l.created_at) >= sevenDaysAgo) entry.recent++;
+    });
+    return map;
+  }, [leads]);
+
+  const sortedCities = useMemo(() => {
+    return [...cities].sort((a, b) => (cityStats.get(b.id)?.total || 0) - (cityStats.get(a.id)?.total || 0));
+  }, [cities, cityStats]);
+
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     setAdding(true);
-    const slug = name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const slug = name.trim().toLowerCase().replace(/[^a-z0-9àâäéèêëïîôùûüç]+/g, "-").replace(/^-|-$/g, "");
     const { error } = await supabase.from("cities").insert({
-      name: name.trim(),
-      slug,
-      postal_code: postalCode.trim() || null,
-      region: region.trim() || null,
+      name: name.trim(), slug, postal_code: postalCode.trim() || null, region: region.trim() || null,
     });
     setAdding(false);
-    if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
-    } else {
-      setName(""); setPostalCode(""); setRegion("");
-      qc.invalidateQueries({ queryKey: ["cities"] });
-    }
+    if (error) toast({ title: "Erreur", description: error.message, variant: "destructive" });
+    else { setName(""); setPostalCode(""); setRegion(""); qc.invalidateQueries({ queryKey: ["cities"] }); }
   };
 
   const handleDelete = async (id: string) => {
@@ -47,7 +60,7 @@ const AdminCities = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-bold">Villes</h1>
-        <p className="text-sm text-muted-foreground">{cities.length} villes enregistrées</p>
+        <p className="text-sm text-muted-foreground">{cities.length} villes · {leads.filter(l => l.city_id).length} leads géolocalisés</p>
       </div>
 
       <form onSubmit={handleAdd} className="flex flex-wrap gap-2">
@@ -64,29 +77,57 @@ const AdminCities = () => {
 
       {isLoading ? (
         <div className="flex items-center justify-center h-32"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
-      ) : cities.length === 0 ? (
+      ) : sortedCities.length === 0 ? (
         <div className="bg-card border border-border rounded-lg px-4 py-12 text-center">
           <MapPin className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
           <p className="text-muted-foreground text-sm">Aucune ville configurée</p>
         </div>
       ) : (
-        <div className="bg-card border border-border rounded-lg divide-y divide-border">
-          {cities.map(city => (
-            <div key={city.id} className="px-4 py-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <MapPin className="w-4 h-4 text-signal-green" />
-                <div>
-                  <p className="text-sm font-medium">{city.name}</p>
-                  <p className="font-mono text-[10px] text-muted-foreground">
-                    {[city.postal_code, city.region].filter(Boolean).join(" · ") || city.slug}
-                  </p>
-                </div>
-              </div>
-              <button onClick={() => handleDelete(city.id)} className="text-muted-foreground hover:text-destructive transition-colors" title="Supprimer">
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ))}
+        <div className="bg-card border border-border rounded-lg">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-border bg-secondary/30">
+                <th className="px-4 py-2.5 text-left font-mono text-[10px] text-muted-foreground uppercase">Ville</th>
+                <th className="px-4 py-2.5 text-right font-mono text-[10px] text-muted-foreground uppercase">Leads</th>
+                <th className="px-4 py-2.5 text-right font-mono text-[10px] text-muted-foreground uppercase hidden sm:table-cell">7 derniers jours</th>
+                <th className="px-4 py-2.5 w-20"></th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              {sortedCities.map(city => {
+                const stats = cityStats.get(city.id) || { total: 0, recent: 0 };
+                return (
+                  <tr key={city.id} className="hover:bg-secondary/20 transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-3.5 h-3.5 text-signal-green shrink-0" />
+                        <div>
+                          <p className="font-medium">{city.name}</p>
+                          <p className="font-mono text-[10px] text-muted-foreground">{[city.postal_code, city.region].filter(Boolean).join(" · ")}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link to={`/app/leads?city=${city.id}`} className="font-mono text-sm font-semibold hover:text-signal-green transition-colors flex items-center justify-end gap-1">
+                        <Users className="w-3 h-3" /> {stats.total}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-right hidden sm:table-cell">
+                      <span className={`font-mono text-xs flex items-center justify-end gap-1 ${stats.recent > 0 ? "text-signal-green" : "text-muted-foreground"}`}>
+                        {stats.recent > 0 && <TrendingUp className="w-3 h-3" />}
+                        +{stats.recent}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button onClick={() => handleDelete(city.id)} className="text-muted-foreground hover:text-destructive transition-colors" title="Supprimer">
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

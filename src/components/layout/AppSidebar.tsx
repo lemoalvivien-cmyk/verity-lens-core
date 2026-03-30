@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, MapPin, FolderOpen, Download, Tag, Search, LogOut, Activity } from "lucide-react";
+import { LayoutDashboard, Users, MapPin, FolderOpen, Download, Tag, Search, LogOut, Activity, ShieldCheck } from "lucide-react";
 import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -23,6 +23,7 @@ const sections = [
     items: [
       { to: "/app/search", icon: Search, label: "Recherche" },
       { to: "/app/export", icon: Download, label: "Export" },
+      { to: "/app/quality", icon: ShieldCheck, label: "Qualité" },
     ],
   },
 ];
