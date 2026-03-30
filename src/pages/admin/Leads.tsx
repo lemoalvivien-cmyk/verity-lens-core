@@ -209,6 +209,21 @@ const AdminLeads = () => {
         </div>
       )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-xs text-muted-foreground">
+            Page {page + 1} / {totalPages} · {leads.length} leads
+          </p>
+          <div className="flex gap-1">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+              className="font-mono text-xs h-7 px-3">Précédent</Button>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
+              className="font-mono text-xs h-7 px-3">Suivant</Button>
+          </div>
+        </div>
+      )}
+
       {/* Detail Dialog */}
       <Dialog open={!!selectedLead} onOpenChange={open => { if (!open) closeDetail(); }}>
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
