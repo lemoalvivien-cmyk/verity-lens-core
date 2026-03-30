@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useAllLeads, useDeleteLeads, findDuplicateEmails } from "@/hooks/useLeads";
+import { useLeadsForQuality, useDeleteLeads, findDuplicateEmails } from "@/hooks/useLeads";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, Trash2, Users, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const AdminQuality = () => {
-  const { data: leads = [], isLoading } = useAllLeads();
+  const { data: leads = [], isLoading } = useLeadsForQuality();
   const deleteLeads = useDeleteLeads();
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);

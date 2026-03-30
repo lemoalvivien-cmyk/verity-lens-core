@@ -8,7 +8,9 @@ import { fr } from "date-fns/locale";
 
 const AdminSearch = () => {
   const [query, setQuery] = useState("");
-  const { data: leads = [], isLoading } = useLeads({ search: query || undefined });
+  const { data } = useLeads({ search: query || undefined });
+  const leads = data?.leads ?? [];
+  const isLoading = !data && !!query;
 
   return (
     <div className="space-y-6 animate-fade-in">

@@ -1,39 +1,33 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useCategories, useAllLeads } from "@/hooks/useLeads";
+import { useCategories, useLeadCountsByField, useLeadCountsByFieldRecent } from "@/hooks/useLeads";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FolderOpen, Plus, Trash2, Loader2, Users, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { subDays } from "date-fns";
 
 const AdminCategories = () => {
   const { data: categories = [], isLoading } = useCategories();
-  const { data: leads = [] } = useAllLeads();
+  const { data: catTotals } = useLeadCountsByField("category_id");
+  const { data: catRecent } = useLeadCountsByFieldRecent("category_id");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [adding, setAdding] = useState(false);
   const qc = useQueryClient();
   const { toast } = useToast();
 
-  const catStats = useMemo(() => {
-    const sevenDaysAgo = subDays(new Date(), 7);
-    const map = new Map<string, { total: number; recent: number }>();
-    leads.forEach(l => {
-      if (!l.category_id) return;
-      if (!map.has(l.category_id)) map.set(l.category_id, { total: 0, recent: 0 });
-      const entry = map.get(l.category_id)!;
-      entry.total++;
-      if (new Date(l.created_at) >= sevenDaysAgo) entry.recent++;
-    });
-    return map;
-  }, [leads]);
+  const totalCatLeads = useMemo(() => {
+    if (!catTotals) return 0;
+    let sum = 0;
+    catTotals.forEach(v => sum += v);
+    return sum;
+  }, [catTotals]);
 
   const sortedCats = useMemo(() => {
-    return [...categories].sort((a, b) => (catStats.get(b.id)?.total || 0) - (catStats.get(a.id)?.total || 0));
-  }, [categories, catStats]);
+    return [...categories].sort((a, b) => (catTotals?.get(b.id) || 0) - (catTotals?.get(a.id) || 0));
+  }, [categories, catTotals]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,7 +53,7 @@ const AdminCategories = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-bold">Catégories</h1>
-        <p className="text-sm text-muted-foreground">{categories.length} catégories · {leads.filter(l => l.category_id).length} leads catégorisés</p>
+        <p className="text-sm text-muted-foreground">{categories.length} catégories · {totalCatLeads} leads catégorisés</p>
       </div>
 
       <form onSubmit={handleAdd} className="flex flex-wrap gap-2">
@@ -92,7 +86,8 @@ const AdminCategories = () => {
             </thead>
             <tbody className="divide-y divide-border">
               {sortedCats.map(cat => {
-                const stats = catStats.get(cat.id) || { total: 0, recent: 0 };
+                const total = catTotals?.get(cat.id) || 0;
+                const recent = catRecent?.get(cat.id) || 0;
                 return (
                   <tr key={cat.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-4 py-3">
@@ -106,13 +101,13 @@ const AdminCategories = () => {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link to={`/app/leads?category=${cat.id}`} className="font-mono text-sm font-semibold hover:text-signal-blue transition-colors flex items-center justify-end gap-1">
-                        <Users className="w-3 h-3" /> {stats.total}
+                        <Users className="w-3 h-3" /> {total}
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-right hidden sm:table-cell">
-                      <span className={`font-mono text-xs flex items-center justify-end gap-1 ${stats.recent > 0 ? "text-signal-green" : "text-muted-foreground"}`}>
-                        {stats.recent > 0 && <TrendingUp className="w-3 h-3" />}
-                        +{stats.recent}
+                      <span className={`font-mono text-xs flex items-center justify-end gap-1 ${recent > 0 ? "text-signal-green" : "text-muted-foreground"}`}>
+                        {recent > 0 && <TrendingUp className="w-3 h-3" />}
+                        +{recent}
                       </span>
                     </td>
                     <td className="px-4 py-3">

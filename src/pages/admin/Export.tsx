@@ -25,13 +25,15 @@ const AdminExport = () => {
   const { toast } = useToast();
   const logExport = useLogExport();
 
-  const { data: leads = [], isLoading } = useLeads({
+  const { data, isLoading } = useLeads({
     city_id: filterCity || undefined,
     category_id: filterCategory || undefined,
     status: filterStatus || undefined,
     date_from: filterDateFrom || undefined,
     date_to: filterDateTo || undefined,
   });
+  const leads = data?.leads ?? [];
+  const leadsCount = data?.total ?? 0;
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
   const { data: exportLogs = [] } = useExportsLog();
@@ -43,15 +45,14 @@ const AdminExport = () => {
     const csv = generateCSV(leads);
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     downloadBlob(blob, `leads_export_${format(new Date(), "yyyy-MM-dd_HHmm")}.csv`);
-    logExport.mutate({ export_type: "csv", filters, row_count: leads.length });
-    toast({ title: "Export CSV", description: `${leads.length} leads exportés.` });
+    logExport.mutate({ export_type: "csv", filters, row_count: leadsCount });
+    toast({ title: "Export CSV", description: `${leadsCount} leads exportés.` });
   };
 
   const exportXLSX = () => {
     if (leads.length === 0) return;
-    // Build a simple XLSX-compatible XML (SpreadsheetML)
     const headers = ["Email", "Nom", "Téléphone", "Ville", "Code postal", "Catégorie", "Statut", "Message", "Source", "Consentement", "Date"];
-    const rows = leads.map(l => [
+    const rows = leads.map((l: any) => [
       l.email, l.full_name || "", l.phone || "", l.city_name || "", l.postal_code || "",
       l.category_name || "", l.status, (l.message || "").replace(/\n/g, " "), l.source_page || "",
       l.consent ? "Oui" : "Non", new Date(l.created_at).toLocaleString("fr-FR"),
@@ -68,8 +69,8 @@ const AdminExport = () => {
 
     const blob = new Blob([xml], { type: "application/vnd.ms-excel" });
     downloadBlob(blob, `leads_export_${format(new Date(), "yyyy-MM-dd_HHmm")}.xls`);
-    logExport.mutate({ export_type: "xlsx", filters, row_count: leads.length });
-    toast({ title: "Export Excel", description: `${leads.length} leads exportés.` });
+    logExport.mutate({ export_type: "xlsx", filters, row_count: leadsCount });
+    toast({ title: "Export Excel", description: `${leadsCount} leads exportés.` });
   };
 
   return (
@@ -118,13 +119,13 @@ const AdminExport = () => {
         ) : (
           <div className="text-center">
             <FileSpreadsheet className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-2xl font-bold font-mono">{leads.length}</p>
+            <p className="text-2xl font-bold font-mono">{leadsCount}</p>
             <p className="text-sm text-muted-foreground mb-5">leads correspondent aux filtres</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Button onClick={exportCSV} disabled={leads.length === 0} variant="outline" className="font-mono text-sm gap-2">
+              <Button onClick={exportCSV} disabled={leadsCount === 0} variant="outline" className="font-mono text-sm gap-2">
                 <Table2 className="w-4 h-4" /> Export CSV
               </Button>
-              <Button onClick={exportXLSX} disabled={leads.length === 0} className="font-mono text-sm gap-2">
+              <Button onClick={exportXLSX} disabled={leadsCount === 0} className="font-mono text-sm gap-2">
                 <Download className="w-4 h-4" /> Export Excel
               </Button>
             </div>

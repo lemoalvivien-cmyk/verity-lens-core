@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLeads, useCities, useCategories, useTags, useUpdateLead, useDeleteLead, useLeadTags, useAddLeadTag, useRemoveLeadTag, useLogLeadEvent, useLeadEvents } from "@/hooks/useLeads";
-import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,8 +19,6 @@ const STATUSES = [
   { value: "archived", label: "Archivé", color: "bg-muted text-muted-foreground" },
 ];
 
-const PAGE_SIZE = 50;
-
 const AdminLeads = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
@@ -34,21 +31,25 @@ const AdminLeads = () => {
   const [page, setPage] = useState(0);
   const detailId = searchParams.get("detail");
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
   }, [search]);
   const { toast } = useToast();
 
-  const { data: leads = [], isLoading } = useLeads({
+  const { data, isLoading } = useLeads({
     search: debouncedSearch || undefined,
     city_id: filterCity || undefined,
     category_id: filterCategory || undefined,
     status: filterStatus || undefined,
     date_from: filterDateFrom || undefined,
     date_to: filterDateTo || undefined,
+    page,
   });
+  const leads = data?.leads ?? [];
+  const totalCount = data?.total ?? 0;
+  const totalPages = Math.ceil(totalCount / 50);
+
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
   const { data: tags = [] } = useTags();
@@ -86,15 +87,12 @@ const AdminLeads = () => {
 
   const hasFilters = search || filterCity || filterCategory || filterStatus || filterDateFrom || filterDateTo;
 
-  const totalPages = Math.ceil(leads.length / PAGE_SIZE);
-  const paginatedLeads = leads.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">Leads</h1>
-          <p className="text-sm text-muted-foreground">{leads.length} contacts {hasFilters ? "(filtré)" : ""}</p>
+          <p className="text-sm text-muted-foreground">{totalCount} contacts {hasFilters ? "(filtré)" : ""}</p>
         </div>
         {hasFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters} className="font-mono text-xs gap-1">
@@ -107,33 +105,33 @@ const AdminLeads = () => {
       <div className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Rechercher email, nom, téléphone, ville..." value={search} onChange={e => setSearch(e.target.value)}
+          <Input placeholder="Rechercher email, nom, téléphone, ville..." value={search} onChange={e => { setSearch(e.target.value); setPage(0); }}
             className="pl-9 bg-card border-border" />
         </div>
-        <Select value={filterCity} onValueChange={v => setFilterCity(v === "all" ? "" : v)}>
+        <Select value={filterCity} onValueChange={v => { setFilterCity(v === "all" ? "" : v); setPage(0); }}>
           <SelectTrigger className="w-[150px] bg-card"><SelectValue placeholder="Ville" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes</SelectItem>
             {cities.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Select value={filterCategory} onValueChange={v => setFilterCategory(v === "all" ? "" : v)}>
+        <Select value={filterCategory} onValueChange={v => { setFilterCategory(v === "all" ? "" : v); setPage(0); }}>
           <SelectTrigger className="w-[150px] bg-card"><SelectValue placeholder="Catégorie" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Toutes</SelectItem>
             {categories.map(c => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Select value={filterStatus} onValueChange={v => setFilterStatus(v === "all" ? "" : v)}>
+        <Select value={filterStatus} onValueChange={v => { setFilterStatus(v === "all" ? "" : v); setPage(0); }}>
           <SelectTrigger className="w-[130px] bg-card"><SelectValue placeholder="Statut" /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Tous</SelectItem>
             {STATUSES.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
           </SelectContent>
         </Select>
-        <Input type="date" value={filterDateFrom} onChange={e => setFilterDateFrom(e.target.value)}
+        <Input type="date" value={filterDateFrom} onChange={e => { setFilterDateFrom(e.target.value); setPage(0); }}
           className="w-[140px] bg-card border-border font-mono text-xs" placeholder="Du" />
-        <Input type="date" value={filterDateTo} onChange={e => setFilterDateTo(e.target.value)}
+        <Input type="date" value={filterDateTo} onChange={e => { setFilterDateTo(e.target.value); setPage(0); }}
           className="w-[140px] bg-card border-border font-mono text-xs" placeholder="Au" />
       </div>
 
@@ -158,7 +156,7 @@ const AdminLeads = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {paginatedLeads.map(lead => (
+              {leads.map(lead => (
                 <tr key={lead.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => openDetail(lead.id)}>
                   <td className="px-4 py-3">
                     <p className="font-medium truncate max-w-[200px]">{lead.full_name || "—"}</p>
@@ -213,7 +211,7 @@ const AdminLeads = () => {
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="font-mono text-xs text-muted-foreground">
-            Page {page + 1} / {totalPages} · {leads.length} leads
+            Page {page + 1} / {totalPages} · {totalCount} leads
           </p>
           <div className="flex gap-1">
             <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
@@ -268,7 +266,6 @@ function LeadDetail({ lead, tags, onClose, onStatusChange, onDelete }: {
       </DialogHeader>
 
       <div className="space-y-4 mt-2">
-        {/* Contact info */}
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
             <p className="font-mono text-[10px] text-muted-foreground uppercase mb-0.5">Email</p>
@@ -301,7 +298,6 @@ function LeadDetail({ lead, tags, onClose, onStatusChange, onDelete }: {
           </div>
         </div>
 
-        {/* Message */}
         {lead.message && (
           <div>
             <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1 flex items-center gap-1"><MessageSquare className="w-3 h-3" /> Message</p>
@@ -309,7 +305,6 @@ function LeadDetail({ lead, tags, onClose, onStatusChange, onDelete }: {
           </div>
         )}
 
-        {/* Tags */}
         <div>
           <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1.5 flex items-center gap-1"><Tag className="w-3 h-3" /> Tags</p>
           <div className="flex flex-wrap gap-1.5 mb-2">
@@ -341,7 +336,6 @@ function LeadDetail({ lead, tags, onClose, onStatusChange, onDelete }: {
           )}
         </div>
 
-        {/* Notes admin */}
         <div>
           <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1">Notes admin</p>
           <Textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Notes internes..."
@@ -351,35 +345,23 @@ function LeadDetail({ lead, tags, onClose, onStatusChange, onDelete }: {
           </Button>
         </div>
 
-        {/* Events history */}
         {events.length > 0 && (
           <div>
             <p className="font-mono text-[10px] text-muted-foreground uppercase mb-1.5 flex items-center gap-1"><Clock className="w-3 h-3" /> Historique</p>
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               {events.slice(0, 10).map((ev: any) => (
                 <div key={ev.id} className="flex items-center gap-2 text-xs text-muted-foreground">
                   <span className="font-mono text-[10px]">{format(new Date(ev.created_at), "dd/MM HH:mm")}</span>
-                  <span>
-                    {ev.event_type === "status_change" ? `Statut: ${ev.metadata?.from} → ${ev.metadata?.to}` : ev.event_type}
-                  </span>
+                  <span>{ev.event_type === "status_change" ? `${ev.metadata?.from} → ${ev.metadata?.to}` : ev.event_type}</span>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Meta */}
-        <div className="border-t border-border pt-3 flex items-center justify-between text-[10px] font-mono text-muted-foreground">
-          <div>
-            <span>Source: {lead.source_page}</span>
-            {lead.source_campaign && <span> · {lead.source_campaign}</span>}
-          </div>
-          <span>Créé le {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm")}</span>
-        </div>
-
-        <div className="flex justify-end">
-          <Button variant="destructive" size="sm" onClick={() => { onDelete(lead.id); onClose(); }} className="font-mono text-xs gap-1">
-            <Trash2 className="w-3 h-3" /> Supprimer
+        <div className="pt-2 border-t border-border">
+          <Button variant="destructive" size="sm" onClick={() => onDelete(lead.id)} className="font-mono text-xs gap-1.5">
+            <Trash2 className="w-3 h-3" /> Supprimer ce lead
           </Button>
         </div>
       </div>

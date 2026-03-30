@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { startOfWeek, startOfMonth, subDays, format } from "date-fns";
 
 export interface LeadFilters {
   city_id?: string;
@@ -9,13 +10,17 @@ export interface LeadFilters {
   date_from?: string;
   date_to?: string;
   tag_id?: string;
+  page?: number;
 }
+
+const PAGE_SIZE = 50;
 
 export function useLeads(filters?: LeadFilters) {
   return useQuery({
     queryKey: ["leads", filters],
     queryFn: async () => {
-      let q = supabase.from("leads").select("*").order("created_at", { ascending: false }).limit(1000);
+      const page = filters?.page ?? 0;
+      let q = supabase.from("leads").select("*", { count: "exact" }).order("created_at", { ascending: false });
       if (filters?.city_id) q = q.eq("city_id", filters.city_id);
       if (filters?.category_id) q = q.eq("category_id", filters.category_id);
       if (filters?.status) q = q.eq("status", filters.status as any);
@@ -27,20 +32,107 @@ export function useLeads(filters?: LeadFilters) {
       }
       if (filters?.date_from) q = q.gte("created_at", filters.date_from);
       if (filters?.date_to) q = q.lte("created_at", filters.date_to + "T23:59:59");
-      const { data, error } = await q;
+      const { data, error, count } = await q.range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
       if (error) throw error;
-      return data;
+      return { leads: data ?? [], total: count ?? 0 };
     },
   });
 }
 
-export function useAllLeads() {
+export function useDashboardStats() {
   return useQuery({
-    queryKey: ["leads-all"],
+    queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("leads").select("id,email,full_name,city_id,city_name,category_id,category_name,status,created_at,postal_code,phone,message,source_page,consent,notes_admin").order("created_at", { ascending: false }).limit(1000);
+      const now = new Date();
+      const todayISO = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+      const weekISO = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
+      const monthISO = startOfMonth(now).toISOString();
+
+      const [total, today, week, month, newCount, recentRes, topCitiesRes, topCatsRes, dailyRes] = await Promise.all([
+        supabase.from("leads").select("*", { count: "exact", head: true }),
+        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", todayISO),
+        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", weekISO),
+        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", monthISO),
+        supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "new"),
+        supabase.from("leads").select("id,email,full_name,city_name,category_name,status,created_at").order("created_at", { ascending: false }).limit(6),
+        supabase.from("leads").select("city_name").not("city_name", "is", null).order("created_at", { ascending: false }).limit(500),
+        supabase.from("leads").select("category_name").not("category_name", "is", null).order("created_at", { ascending: false }).limit(500),
+        supabase.from("leads").select("created_at").gte("created_at", subDays(now, 14).toISOString()).order("created_at", { ascending: false }),
+      ]);
+
+      // Top 5 cities
+      const cityMap = new Map<string, number>();
+      (topCitiesRes.data ?? []).forEach((l: any) => { cityMap.set(l.city_name, (cityMap.get(l.city_name) || 0) + 1); });
+      const topCities = Array.from(cityMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+      // Top 5 categories
+      const catMap = new Map<string, number>();
+      (topCatsRes.data ?? []).forEach((l: any) => { catMap.set(l.category_name, (catMap.get(l.category_name) || 0) + 1); });
+      const topCategories = Array.from(catMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+      // Daily chart (14 days)
+      const dailyMap = new Map<string, number>();
+      (dailyRes.data ?? []).forEach((l: any) => {
+        const day = l.created_at.substring(0, 10);
+        dailyMap.set(day, (dailyMap.get(day) || 0) + 1);
+      });
+      const dailyChart: { date: string; count: number }[] = [];
+      for (let i = 13; i >= 0; i--) {
+        const d = subDays(now, i);
+        const key = format(d, "yyyy-MM-dd");
+        dailyChart.push({ date: format(d, "dd/MM"), count: dailyMap.get(key) || 0 });
+      }
+
+      return {
+        total: total.count ?? 0,
+        today: today.count ?? 0,
+        week: week.count ?? 0,
+        month: month.count ?? 0,
+        newLeads: newCount.count ?? 0,
+        recentLeads: recentRes.data ?? [],
+        topCities,
+        topCategories,
+        dailyChart,
+      };
+    },
+  });
+}
+
+export function useLeadCountsByField(field: "city_id" | "category_id") {
+  return useQuery({
+    queryKey: ["lead-counts", field],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("leads").select(field).not(field, "is", null);
       if (error) throw error;
-      return data;
+      const map = new Map<string, number>();
+      (data ?? []).forEach((row: any) => { const v = row[field]; if (v) map.set(v, (map.get(v) || 0) + 1); });
+      return map;
+    },
+  });
+}
+
+export function useLeadCountsByFieldRecent(field: "city_id" | "category_id") {
+  return useQuery({
+    queryKey: ["lead-counts-recent", field],
+    queryFn: async () => {
+      const since = subDays(new Date(), 7).toISOString();
+      const { data, error } = await supabase.from("leads").select(field).not(field, "is", null).gte("created_at", since);
+      if (error) throw error;
+      const map = new Map<string, number>();
+      (data ?? []).forEach((row: any) => { const v = row[field]; if (v) map.set(v, (map.get(v) || 0) + 1); });
+      return map;
+    },
+  });
+}
+
+// For Quality page - fetch only id, email, full_name, created_at, city_name for duplicate detection
+export function useLeadsForQuality() {
+  return useQuery({
+    queryKey: ["leads-quality"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("leads").select("id,email,full_name,created_at,city_name").order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
     },
   });
 }
