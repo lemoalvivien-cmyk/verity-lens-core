@@ -58,8 +58,8 @@ const Auth = () => {
     });
     if (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Google sign-in failed",
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Échec de la connexion Google",
         variant: "destructive",
       });
     }
