@@ -45,8 +45,8 @@ const AdminExport = () => {
     const csv = generateCSV(leads);
     const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
     downloadBlob(blob, `leads_export_${format(new Date(), "yyyy-MM-dd_HHmm")}.csv`);
-    logExport.mutate({ export_type: "csv", filters, row_count: leads.length });
-    toast({ title: "Export CSV", description: `${leads.length} leads exportés.` });
+    logExport.mutate({ export_type: "csv", filters, row_count: leadsCount });
+    toast({ title: "Export CSV", description: `${leadsCount} leads exportés.` });
   };
 
   const exportXLSX = () => {
