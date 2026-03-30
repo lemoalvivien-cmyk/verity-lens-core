@@ -19,6 +19,7 @@ const SubmitLead = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lastSubmit, setLastSubmit] = useState(0);
   const { toast } = useToast();
 
   const [form, setForm] = useState({
@@ -30,6 +31,7 @@ const SubmitLead = () => {
     category_id: searchParams.get("category") || "",
     message: "",
     consent: false,
+    website: "",
   });
 
   useEffect(() => {
