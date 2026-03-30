@@ -84,10 +84,10 @@ const AiMonitors = () => {
                   <h3 className="text-sm font-medium text-foreground">{m.name}</h3>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={m.status === "active" ? "active" : m.status === "paused" ? "paused" : "error"} />
-                    <button onClick={() => handleToggle(m.id, m.status)} className="text-muted-foreground hover:text-foreground p-1" title={m.status === "active" ? "Pause" : "Resume"}>
+                    <button onClick={() => handleToggle(m.id, m.status)} className="text-muted-foreground hover:text-foreground p-1.5 rounded-md hover:bg-secondary/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={m.status === "active" ? "Pause monitor" : "Resume monitor"} title={m.status === "active" ? "Pause" : "Resume"}>
                       {m.status === "active" ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                     </button>
-                    <button onClick={() => handleDelete(m.id, m.name)} className="text-muted-foreground hover:text-signal-red p-1" title="Delete">
+                    <button onClick={() => handleDelete(m.id, m.name)} className="text-muted-foreground hover:text-signal-red p-1.5 rounded-md hover:bg-signal-red/10 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" aria-label={`Delete monitor ${m.name}`} title="Delete">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>

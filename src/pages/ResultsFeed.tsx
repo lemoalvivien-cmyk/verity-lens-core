@@ -35,7 +35,7 @@ const ResultsFeed = () => {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="bg-card border border-border rounded-lg p-4 hover:border-border/80 transition-colors cursor-pointer"
+              className="bg-card border border-border rounded-lg p-4 hover:border-border/80 transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
                 {e.source_engine ? (
