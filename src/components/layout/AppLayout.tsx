@@ -40,7 +40,7 @@ const AppLayout = () => {
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
-          <span className="ml-3 font-mono text-xs font-bold text-foreground">TruthOS</span>
+          <span className="ml-3 font-mono text-xs font-bold text-foreground">LeadOS</span>
         </div>
 
         <div className="max-w-6xl mx-auto p-4 md:p-6">

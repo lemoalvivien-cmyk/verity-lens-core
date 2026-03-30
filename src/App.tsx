@@ -18,6 +18,7 @@ import AdminCategories from "./pages/admin/Categories";
 import AdminTags from "./pages/admin/Tags";
 import AdminExport from "./pages/admin/Export";
 import AdminSearch from "./pages/admin/Search";
+import AdminQuality from "./pages/admin/Quality";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
                 <Route path="tags" element={<AdminTags />} />
                 <Route path="export" element={<AdminExport />} />
                 <Route path="search" element={<AdminSearch />} />
+                <Route path="quality" element={<AdminQuality />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
