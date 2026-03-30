@@ -7,6 +7,7 @@ import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AppLayout from "@/components/layout/AppLayout";
 import LandingPage from "./pages/LandingPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import SubmitLead from "./pages/SubmitLead";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
