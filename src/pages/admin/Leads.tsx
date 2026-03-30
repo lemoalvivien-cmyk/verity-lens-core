@@ -20,15 +20,25 @@ const STATUSES = [
   { value: "archived", label: "Archivé", color: "bg-muted text-muted-foreground" },
 ];
 
+const PAGE_SIZE = 50;
+
 const AdminLeads = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState("");
-  const [filterCity, setFilterCity] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterDateFrom, setFilterDateFrom] = useState("");
-  const [filterDateTo, setFilterDateTo] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [filterCity, setFilterCity] = useState(searchParams.get("city") || "");
+  const [filterCategory, setFilterCategory] = useState(searchParams.get("category") || "");
+  const [filterStatus, setFilterStatus] = useState(searchParams.get("status") || "");
+  const [filterDateFrom, setFilterDateFrom] = useState(searchParams.get("from") || "");
+  const [filterDateTo, setFilterDateTo] = useState(searchParams.get("to") || "");
+  const [page, setPage] = useState(0);
   const detailId = searchParams.get("detail");
+
+  // Debounce search
+  useState(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  });
   const { toast } = useToast();
 
   const { data: leads = [], isLoading } = useLeads({
