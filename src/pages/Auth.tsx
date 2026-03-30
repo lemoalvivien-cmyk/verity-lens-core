@@ -167,12 +167,12 @@ const Auth = () => {
         </form>
 
         <p className="text-center font-mono text-xs text-muted-foreground">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+          {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
           <button
             onClick={() => setIsLogin(!isLogin)}
             className="ml-1 text-foreground hover:text-signal-green transition-colors underline"
           >
-            {isLogin ? "Sign up" : "Sign in"}
+            {isLogin ? "S'inscrire" : "Se connecter"}
           </button>
         </p>
       </div>
