@@ -65,6 +65,9 @@ const SubmitLead = () => {
     const cityObj = cities.find(c => c.id === form.city_id);
     const catObj = categories.find(c => c.id === form.category_id);
 
+    const workspaceRes = await supabase.rpc('resolve_workspace_for_submission', { p_slug: searchParams.get('ws') || null });
+    const resolvedWorkspaceId = workspaceRes.data;
+
     const { error } = await supabase.from("leads").insert({
       email: form.email.trim(),
       full_name: form.full_name.trim() || null,
@@ -79,12 +82,22 @@ const SubmitLead = () => {
       source_campaign: searchParams.get("utm_campaign") || null,
       consent: form.consent,
       consent_text_version: "v1",
+      workspace_id: resolvedWorkspaceId,
     });
 
     setLoading(false);
     if (error) {
       toast({ title: "Erreur", description: "Impossible d'envoyer le formulaire.", variant: "destructive" });
     } else {
+      await supabase.from('consent_log').insert({
+        lead_id: null,
+        email: form.email.trim().toLowerCase(),
+        consent_text_hash: 'v1-sha256-pending',
+        consent_text_version: 'v1',
+        source_page: window.location.pathname + window.location.search,
+        source_campaign: searchParams.get('utm_campaign') || null,
+        workspace_id: resolvedWorkspaceId,
+      });
       setLastSubmit(Date.now());
       setSubmitted(true);
     }

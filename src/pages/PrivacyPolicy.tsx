@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 const sections = [
   {
     title: "1. Responsable du traitement",
-    content: "[NOM_ENTREPRISE] — [ADRESSE]\nContact DPO : [EMAIL_DPO]",
+    content: "VLM Consulting — Croix, 59170, France\nContact DPO : dpo@vlm-consulting.fr",
   },
   {
     title: "2. Finalité du traitement",
