@@ -109,7 +109,7 @@ const Auth = () => {
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {!isLogin && (
             <div className="space-y-2">
-              <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Full name</Label>
+              <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Nom complet</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
