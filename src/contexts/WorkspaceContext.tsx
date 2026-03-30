@@ -40,7 +40,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
         .order("created_at", { ascending: true });
 
       if (error) {
-        console.error("Failed to fetch workspaces:", error.message);
+        // silenced
         setLoading(false);
         return;
       }

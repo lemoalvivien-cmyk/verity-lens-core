@@ -1,10 +1,17 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
+interface Props {
+  children: React.ReactNode;
+  requiredRole?: "owner" | "admin" | "member" | "viewer";
+}
 
-  if (loading) {
+const ProtectedRoute = ({ children, requiredRole }: Props) => {
+  const { user, loading: authLoading } = useAuth();
+  const { workspace, loading: wsLoading } = useWorkspace();
+
+  if (authLoading || wsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
@@ -12,9 +19,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
+  if (!user) return <Navigate to="/login" replace />;
+  if (!workspace) return <Navigate to="/login" replace />;
 
   return <>{children}</>;
 };
