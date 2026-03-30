@@ -35,10 +35,10 @@ const AdminLeads = () => {
   const detailId = searchParams.get("detail");
 
   // Debounce search
-  useState(() => {
+  useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 300);
     return () => clearTimeout(timer);
-  });
+  }, [search]);
   const { toast } = useToast();
 
   const { data: leads = [], isLoading } = useLeads({
