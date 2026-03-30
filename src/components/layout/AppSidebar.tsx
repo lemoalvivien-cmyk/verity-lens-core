@@ -52,12 +52,21 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      {/* Status bar */}
-      <div className="p-4 border-t border-sidebar-border">
+      {/* User */}
+      <div className="p-4 border-t border-sidebar-border space-y-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-signal-green animate-pulse-slow" />
-          <span className="font-mono text-xs text-muted-foreground">System Online</span>
+          <span className="font-mono text-xs text-muted-foreground truncate">
+            {user?.email}
+          </span>
         </div>
+        <button
+          onClick={signOut}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Déconnexion</span>
+        </button>
       </div>
     </aside>
   );
