@@ -71,6 +71,63 @@ export type Database = {
         }
         Relationships: []
       }
+      consent_log: {
+        Row: {
+          consent_text_hash: string
+          consent_text_version: string
+          consented_at: string
+          email: string
+          id: string
+          ip_hash: string | null
+          lead_id: string | null
+          source_campaign: string | null
+          source_page: string
+          user_agent_hash: string | null
+          workspace_id: string | null
+        }
+        Insert: {
+          consent_text_hash: string
+          consent_text_version?: string
+          consented_at?: string
+          email: string
+          id?: string
+          ip_hash?: string | null
+          lead_id?: string | null
+          source_campaign?: string | null
+          source_page?: string
+          user_agent_hash?: string | null
+          workspace_id?: string | null
+        }
+        Update: {
+          consent_text_hash?: string
+          consent_text_version?: string
+          consented_at?: string
+          email?: string
+          id?: string
+          ip_hash?: string | null
+          lead_id?: string | null
+          source_campaign?: string | null
+          source_page?: string
+          user_agent_hash?: string | null
+          workspace_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consent_log_workspace_id_fkey"
+            columns: ["workspace_id"]
+            isOneToOne: false
+            referencedRelation: "workspaces"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exports_log: {
         Row: {
           created_at: string
@@ -370,6 +427,10 @@ export type Database = {
       is_workspace_member: {
         Args: { _user_id: string; _workspace_id: string }
         Returns: boolean
+      }
+      resolve_workspace_for_submission: {
+        Args: { p_slug?: string }
+        Returns: string
       }
     }
     Enums: {
