@@ -10,27 +10,27 @@ const sections = [
   {
     label: "Intelligence",
     items: [
-      { to: "/", icon: LayoutDashboard, label: "Dashboard" },
-      { to: "/ai-monitors", icon: Radio, label: "AI Monitors" },
-      { to: "/web-monitors", icon: Eye, label: "Web Monitors" },
-      { to: "/results", icon: Rss, label: "Results Feed" },
+      { to: "/app", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/app/ai-monitors", icon: Radio, label: "AI Monitors" },
+      { to: "/app/web-monitors", icon: Eye, label: "Web Monitors" },
+      { to: "/app/results", icon: Rss, label: "Results Feed" },
     ],
   },
   {
     label: "Analyse",
     items: [
-      { to: "/evidence", icon: FileSearch, label: "Evidence" },
-      { to: "/diffs", icon: GitCompare, label: "Diffs" },
-      { to: "/compare", icon: GitCompare, label: "Compare" },
-      { to: "/search", icon: Search, label: "Search" },
+      { to: "/app/evidence", icon: FileSearch, label: "Evidence" },
+      { to: "/app/diffs", icon: GitCompare, label: "Diffs" },
+      { to: "/app/compare", icon: GitCompare, label: "Compare" },
+      { to: "/app/search", icon: Search, label: "Search" },
     ],
   },
   {
     label: "System",
     items: [
-      { to: "/alerts", icon: Bell, label: "Alerts" },
-      { to: "/settings", icon: Settings, label: "Settings" },
-      { to: "/destinations", icon: Webhook, label: "API & Destinations" },
+      { to: "/app/alerts", icon: Bell, label: "Alerts" },
+      { to: "/app/settings", icon: Settings, label: "Settings" },
+      { to: "/app/destinations", icon: Webhook, label: "API & Destinations" },
     ],
   },
 ];
