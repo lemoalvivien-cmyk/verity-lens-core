@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Activity, Eye, GitCompare, LayoutDashboard, Radio } from "lucide-react";
+import { Activity, Eye, GitCompare, LayoutDashboard, Radio, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Command Center" },
