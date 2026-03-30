@@ -420,6 +420,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_dashboard_aggregates: {
+        Args: { p_workspace_id: string }
+        Returns: Json
+      }
       get_workspace_role: {
         Args: { _user_id: string; _workspace_id: string }
         Returns: Database["public"]["Enums"]["workspace_role"]
