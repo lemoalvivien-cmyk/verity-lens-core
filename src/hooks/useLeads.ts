@@ -98,6 +98,45 @@ export function useDashboardStats() {
   });
 }
 
+export function useLeadCountsByField(field: "city_id" | "category_id") {
+  return useQuery({
+    queryKey: ["lead-counts", field],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("leads").select(field).not(field, "is", null);
+      if (error) throw error;
+      const map = new Map<string, number>();
+      (data ?? []).forEach((row: any) => { const v = row[field]; if (v) map.set(v, (map.get(v) || 0) + 1); });
+      return map;
+    },
+  });
+}
+
+export function useLeadCountsByFieldRecent(field: "city_id" | "category_id") {
+  return useQuery({
+    queryKey: ["lead-counts-recent", field],
+    queryFn: async () => {
+      const since = subDays(new Date(), 7).toISOString();
+      const { data, error } = await supabase.from("leads").select(field).not(field, "is", null).gte("created_at", since);
+      if (error) throw error;
+      const map = new Map<string, number>();
+      (data ?? []).forEach((row: any) => { const v = row[field]; if (v) map.set(v, (map.get(v) || 0) + 1); });
+      return map;
+    },
+  });
+}
+
+// For Quality page - fetch only id, email, full_name, created_at, city_name for duplicate detection
+export function useLeadsForQuality() {
+  return useQuery({
+    queryKey: ["leads-quality"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("leads").select("id,email,full_name,created_at,city_name").order("created_at", { ascending: true });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
 export function useCities() {
   return useQuery({
     queryKey: ["cities"],
