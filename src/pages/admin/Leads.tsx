@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLeads, useCities, useCategories, useTags, useUpdateLead, useDeleteLead, useLeadTags, useAddLeadTag, useRemoveLeadTag, useLogLeadEvent, useLeadEvents } from "@/hooks/useLeads";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,19 +20,29 @@ const STATUSES = [
   { value: "archived", label: "Archivé", color: "bg-muted text-muted-foreground" },
 ];
 
+const PAGE_SIZE = 50;
+
 const AdminLeads = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [search, setSearch] = useState("");
-  const [filterCity, setFilterCity] = useState("");
-  const [filterCategory, setFilterCategory] = useState("");
-  const [filterStatus, setFilterStatus] = useState("");
-  const [filterDateFrom, setFilterDateFrom] = useState("");
-  const [filterDateTo, setFilterDateTo] = useState("");
+  const [search, setSearch] = useState(searchParams.get("search") || "");
+  const [debouncedSearch, setDebouncedSearch] = useState(search);
+  const [filterCity, setFilterCity] = useState(searchParams.get("city") || "");
+  const [filterCategory, setFilterCategory] = useState(searchParams.get("category") || "");
+  const [filterStatus, setFilterStatus] = useState(searchParams.get("status") || "");
+  const [filterDateFrom, setFilterDateFrom] = useState(searchParams.get("from") || "");
+  const [filterDateTo, setFilterDateTo] = useState(searchParams.get("to") || "");
+  const [page, setPage] = useState(0);
   const detailId = searchParams.get("detail");
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
   const { toast } = useToast();
 
   const { data: leads = [], isLoading } = useLeads({
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     city_id: filterCity || undefined,
     category_id: filterCategory || undefined,
     status: filterStatus || undefined,
@@ -69,10 +79,15 @@ const AdminLeads = () => {
   const closeDetail = () => setSearchParams({});
 
   const clearFilters = () => {
-    setSearch(""); setFilterCity(""); setFilterCategory(""); setFilterStatus(""); setFilterDateFrom(""); setFilterDateTo("");
+    setSearch(""); setDebouncedSearch(""); setFilterCity(""); setFilterCategory(""); setFilterStatus(""); setFilterDateFrom(""); setFilterDateTo("");
+    setPage(0);
+    setSearchParams({});
   };
 
   const hasFilters = search || filterCity || filterCategory || filterStatus || filterDateFrom || filterDateTo;
+
+  const totalPages = Math.ceil(leads.length / PAGE_SIZE);
+  const paginatedLeads = leads.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <div className="space-y-4 animate-fade-in">
@@ -143,7 +158,7 @@ const AdminLeads = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {leads.map(lead => (
+              {paginatedLeads.map(lead => (
                 <tr key={lead.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => openDetail(lead.id)}>
                   <td className="px-4 py-3">
                     <p className="font-medium truncate max-w-[200px]">{lead.full_name || "—"}</p>
@@ -191,6 +206,21 @@ const AdminLeads = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="font-mono text-xs text-muted-foreground">
+            Page {page + 1} / {totalPages} · {leads.length} leads
+          </p>
+          <div className="flex gap-1">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(0, p - 1))} disabled={page === 0}
+              className="font-mono text-xs h-7 px-3">Précédent</Button>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))} disabled={page >= totalPages - 1}
+              className="font-mono text-xs h-7 px-3">Suivant</Button>
+          </div>
         </div>
       )}
 

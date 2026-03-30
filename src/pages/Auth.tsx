@@ -139,7 +139,7 @@ const Auth = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Mot de passe</Label>
+            <Label htmlFor="password" className="font-mono text-xs text-muted-foreground">Mot de passe</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input

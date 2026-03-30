@@ -8,10 +8,10 @@ const NotFound = () => (
       <Activity className="w-5 h-5 text-primary-foreground" />
     </div>
     <h1 className="font-mono text-4xl font-bold text-foreground mb-2">404</h1>
-    <p className="font-mono text-sm text-muted-foreground mb-6">Page not found</p>
+    <p className="font-mono text-sm text-muted-foreground mb-6">Page introuvable</p>
     <Link to="/">
       <Button variant="outline" size="sm" className="font-mono text-xs bg-card border-border">
-        Back to Dashboard
+        Retour à l'accueil
       </Button>
     </Link>
   </div>

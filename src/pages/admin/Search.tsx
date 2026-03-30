@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useLeads } from "@/hooks/useLeads";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, MapPin, Mail, Loader2 } from "lucide-react";
+import { Search as SearchIcon, MapPin, Mail, Loader2, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
@@ -31,26 +32,31 @@ const AdminSearch = () => {
       ) : query ? (
         <div className="bg-card border border-border rounded-lg divide-y divide-border">
           {leads.map(lead => (
-            <div key={lead.id} className="px-4 py-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium">{lead.full_name || lead.email}</p>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <span className="font-mono text-[10px] text-muted-foreground flex items-center gap-0.5">
-                      <Mail className="w-3 h-3" /> {lead.email}
-                    </span>
-                    {lead.city_name && (
+            <Link key={lead.id} to={`/app/leads?detail=${lead.id}`} className="block">
+              <div className="px-4 py-3 hover:bg-secondary/20 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium">{lead.full_name || lead.email}</p>
+                    <div className="flex items-center gap-3 mt-0.5">
                       <span className="font-mono text-[10px] text-muted-foreground flex items-center gap-0.5">
-                        <MapPin className="w-3 h-3" /> {lead.city_name}
+                        <Mail className="w-3 h-3" /> {lead.email}
                       </span>
-                    )}
+                      {lead.city_name && (
+                        <span className="font-mono text-[10px] text-muted-foreground flex items-center gap-0.5">
+                          <MapPin className="w-3 h-3" /> {lead.city_name}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-[10px] text-muted-foreground">
+                      {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true, locale: fr })}
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                   </div>
                 </div>
-                <span className="font-mono text-[10px] text-muted-foreground">
-                  {formatDistanceToNow(new Date(lead.created_at), { addSuffix: true, locale: fr })}
-                </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       ) : (
