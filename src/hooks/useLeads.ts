@@ -19,7 +19,12 @@ export function useLeads(filters?: LeadFilters) {
       if (filters?.city_id) q = q.eq("city_id", filters.city_id);
       if (filters?.category_id) q = q.eq("category_id", filters.category_id);
       if (filters?.status) q = q.eq("status", filters.status as any);
-      if (filters?.search) q = q.or(`email.ilike.%${filters.search}%,full_name.ilike.%${filters.search}%,phone.ilike.%${filters.search}%,city_name.ilike.%${filters.search}%`);
+      if (filters?.search) {
+        const sanitized = filters.search.replace(/[%_\(),."']/g, '');
+        if (sanitized.trim()) {
+          q = q.or(`email.ilike.%${sanitized}%,full_name.ilike.%${sanitized}%,phone.ilike.%${sanitized}%,city_name.ilike.%${sanitized}%`);
+        }
+      }
       if (filters?.date_from) q = q.gte("created_at", filters.date_from);
       if (filters?.date_to) q = q.lte("created_at", filters.date_to + "T23:59:59");
       const { data, error } = await q;
