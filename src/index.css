@@ -90,31 +90,4 @@
   .glow-red {
     box-shadow: 0 0 20px hsl(var(--signal-red) / 0.15);
   }
-  .text-signal-green {
-    color: hsl(var(--signal-green));
-  }
-  .text-signal-amber {
-    color: hsl(var(--signal-amber));
-  }
-  .text-signal-red {
-    color: hsl(var(--signal-red));
-  }
-  .text-signal-blue {
-    color: hsl(var(--signal-blue));
-  }
-  .bg-signal-green {
-    background-color: hsl(var(--signal-green));
-  }
-  .bg-signal-amber {
-    background-color: hsl(var(--signal-amber));
-  }
-  .bg-signal-red {
-    background-color: hsl(var(--signal-red));
-  }
-  .bg-surface-elevated {
-    background-color: hsl(var(--surface-elevated));
-  }
-  .border-signal-green {
-    border-color: hsl(var(--signal-green));
-  }
 }
