@@ -37,8 +37,8 @@ const Auth = () => {
         });
         if (error) throw error;
         toast({
-          title: "Account created",
-          description: "Check your email to confirm your registration.",
+          title: "Compte créé",
+          description: "Vérifiez votre email pour confirmer votre inscription.",
         });
       }
     } catch (error: any) {
