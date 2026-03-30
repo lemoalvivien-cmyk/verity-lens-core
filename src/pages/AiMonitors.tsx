@@ -24,13 +24,22 @@ const AiMonitors = () => {
 
   const handleToggle = async (id: string, current: string) => {
     const next = current === "active" ? "paused" : "active";
-    await updateStatus.mutateAsync({ id, status: next as any });
-    toast({ title: `Monitor ${next}` });
+    try {
+      await updateStatus.mutateAsync({ id, status: next as any });
+      toast({ title: `Monitor ${next}` });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   const handleDelete = async (id: string, name: string) => {
-    await deleteMonitor.mutateAsync(id);
-    toast({ title: "Monitor deleted", description: `"${name}" has been removed.` });
+    if (!window.confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    try {
+      await deleteMonitor.mutateAsync(id);
+      toast({ title: "Monitor deleted", description: `"${name}" has been removed.` });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    }
   };
 
   if (isLoading) {
@@ -75,10 +84,10 @@ const AiMonitors = () => {
                   <h3 className="text-sm font-medium text-foreground">{m.name}</h3>
                   <div className="flex items-center gap-2">
                     <StatusBadge status={m.status === "active" ? "active" : m.status === "paused" ? "paused" : "error"} />
-                    <button onClick={() => handleToggle(m.id, m.status)} className="text-muted-foreground hover:text-foreground p-1">
+                    <button onClick={() => handleToggle(m.id, m.status)} className="text-muted-foreground hover:text-foreground p-1" title={m.status === "active" ? "Pause" : "Resume"}>
                       {m.status === "active" ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5" />}
                     </button>
-                    <button onClick={() => handleDelete(m.id, m.name)} className="text-muted-foreground hover:text-signal-red p-1">
+                    <button onClick={() => handleDelete(m.id, m.name)} className="text-muted-foreground hover:text-signal-red p-1" title="Delete">
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
