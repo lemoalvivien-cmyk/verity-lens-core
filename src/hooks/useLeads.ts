@@ -48,16 +48,17 @@ export function useDashboardStats() {
       if (!workspace?.id) throw new Error("No workspace");
       const { data, error } = await supabase.rpc("get_dashboard_aggregates", { p_workspace_id: workspace.id });
       if (error) throw error;
+      const d = data as any;
       return {
-        total: data.total ?? 0,
-        today: data.today ?? 0,
-        week: data.week ?? 0,
-        month: data.month ?? 0,
-        newLeads: data.newLeads ?? 0,
-        recentLeads: data.recentLeads ?? [],
-        topCities: (data.topCities ?? []).map((c: any) => [c.name, c.count]),
-        topCategories: (data.topCategories ?? []).map((c: any) => [c.name, c.count]),
-        dailyChart: data.dailyChart ?? [],
+        total: d.total ?? 0,
+        today: d.today ?? 0,
+        week: d.week ?? 0,
+        month: d.month ?? 0,
+        newLeads: d.newLeads ?? 0,
+        recentLeads: d.recentLeads ?? [],
+        topCities: (d.topCities ?? []).map((c: any) => [c.name, c.count]),
+        topCategories: (d.topCategories ?? []).map((c: any) => [c.name, c.count]),
+        dailyChart: d.dailyChart ?? [],
       };
     },
     enabled: !!workspace?.id,
