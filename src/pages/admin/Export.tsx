@@ -25,13 +25,15 @@ const AdminExport = () => {
   const { toast } = useToast();
   const logExport = useLogExport();
 
-  const { data: leads = [], isLoading } = useLeads({
+  const { data, isLoading } = useLeads({
     city_id: filterCity || undefined,
     category_id: filterCategory || undefined,
     status: filterStatus || undefined,
     date_from: filterDateFrom || undefined,
     date_to: filterDateTo || undefined,
   });
+  const leads = data?.leads ?? [];
+  const leadsCount = data?.total ?? 0;
   const { data: cities = [] } = useCities();
   const { data: categories = [] } = useCategories();
   const { data: exportLogs = [] } = useExportsLog();
