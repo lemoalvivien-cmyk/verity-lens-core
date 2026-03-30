@@ -83,7 +83,7 @@ const Index = () => {
               icon={Radio}
               title="No monitors yet"
               description="Create your first monitor to start collecting intelligence."
-              action={<Link to="/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
+              action={<Link to="/app/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
             />
           ) : (
             <div className="divide-y divide-border">
