@@ -79,10 +79,15 @@ const AdminLeads = () => {
   const closeDetail = () => setSearchParams({});
 
   const clearFilters = () => {
-    setSearch(""); setFilterCity(""); setFilterCategory(""); setFilterStatus(""); setFilterDateFrom(""); setFilterDateTo("");
+    setSearch(""); setDebouncedSearch(""); setFilterCity(""); setFilterCategory(""); setFilterStatus(""); setFilterDateFrom(""); setFilterDateTo("");
+    setPage(0);
+    setSearchParams({});
   };
 
   const hasFilters = search || filterCity || filterCategory || filterStatus || filterDateFrom || filterDateTo;
+
+  const totalPages = Math.ceil(leads.length / PAGE_SIZE);
+  const paginatedLeads = leads.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
 
   return (
     <div className="space-y-4 animate-fade-in">
