@@ -37,13 +37,13 @@ const Auth = () => {
         });
         if (error) throw error;
         toast({
-          title: "Account created",
-          description: "Check your email to confirm your registration.",
+          title: "Compte créé",
+          description: "Vérifiez votre email pour confirmer votre inscription.",
         });
       }
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Erreur",
         description: error.message,
         variant: "destructive",
       });
@@ -58,8 +58,8 @@ const Auth = () => {
     });
     if (error) {
       toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Google sign-in failed",
+        title: "Erreur",
+        description: error instanceof Error ? error.message : "Échec de la connexion Google",
         variant: "destructive",
       });
     }
@@ -75,12 +75,12 @@ const Auth = () => {
               <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="text-left">
-              <h1 className="font-mono text-lg font-bold text-foreground tracking-tight">TruthOS</h1>
-              <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Web Intelligence</p>
+              <h1 className="font-mono text-lg font-bold text-foreground tracking-tight">LeadOS</h1>
+              <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Collecte de leads</p>
             </div>
           </div>
           <h2 className="font-mono text-sm text-muted-foreground">
-            {isLogin ? "Sign in to your account" : "Create your account"}
+            {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </h2>
         </div>
 
@@ -96,12 +96,12 @@ const Auth = () => {
             <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
             <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
           </svg>
-          Continue with Google
+          Continuer avec Google
         </Button>
 
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-border" />
-          <span className="font-mono text-[10px] text-muted-foreground uppercase">or</span>
+          <span className="font-mono text-[10px] text-muted-foreground uppercase">ou</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
@@ -109,7 +109,7 @@ const Auth = () => {
         <form onSubmit={handleEmailAuth} className="space-y-4">
           {!isLogin && (
             <div className="space-y-2">
-              <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Full name</Label>
+              <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Nom complet</Label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
@@ -124,7 +124,7 @@ const Auth = () => {
             </div>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email" className="font-mono text-xs text-muted-foreground">Email</Label>
+            <Label htmlFor="email" className="font-mono text-xs text-muted-foreground">Adresse email</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -139,7 +139,7 @@ const Auth = () => {
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password" className="font-mono text-xs text-muted-foreground">Password</Label>
+            <Label htmlFor="name" className="font-mono text-xs text-muted-foreground">Mot de passe</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -156,23 +156,23 @@ const Auth = () => {
           </div>
           {isLogin && (
             <div className="text-right">
-              <Link to="/forgot-password" className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
-                Forgot password?
-              </Link>
+               <Link to="/forgot-password" className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors">
+                Mot de passe oublié ?
+               </Link>
             </div>
           )}
           <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
-            {loading ? "Loading..." : isLogin ? "Sign in" : "Create account"}
+            {loading ? "Chargement..." : isLogin ? "Se connecter" : "Créer un compte"}
           </Button>
         </form>
 
         <p className="text-center font-mono text-xs text-muted-foreground">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}
+          {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
           <button
             onClick={() => setIsLogin(!isLogin)}
             className="ml-1 text-foreground hover:text-signal-green transition-colors underline"
           >
-            {isLogin ? "Sign up" : "Sign in"}
+            {isLogin ? "S'inscrire" : "Se connecter"}
           </button>
         </p>
       </div>

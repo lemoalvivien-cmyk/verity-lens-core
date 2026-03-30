@@ -47,7 +47,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
 
       setWorkspaces(data || []);
       if (data && data.length > 0) {
-        const savedId = localStorage.getItem("truthos_workspace_id");
+        const savedId = localStorage.getItem("leados_workspace_id");
         const saved = data.find((w) => w.id === savedId);
         setWorkspace(saved || data[0]);
       }
@@ -61,7 +61,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     const found = workspaces.find((w) => w.id === id);
     if (found) {
       setWorkspace(found);
-      localStorage.setItem("truthos_workspace_id", id);
+      localStorage.setItem("leados_workspace_id", id);
     }
   };
 
