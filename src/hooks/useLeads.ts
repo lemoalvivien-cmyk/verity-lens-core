@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useWorkspace } from "@/contexts/WorkspaceContext";
 import { startOfWeek, startOfMonth, subDays, format } from "date-fns";
 
 export interface LeadFilters {
@@ -40,61 +41,28 @@ export function useLeads(filters?: LeadFilters) {
 }
 
 export function useDashboardStats() {
+  const { workspace } = useWorkspace();
   return useQuery({
-    queryKey: ["dashboard-stats"],
+    queryKey: ["dashboard-stats", workspace?.id],
     queryFn: async () => {
-      const now = new Date();
-      const todayISO = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-      const weekISO = startOfWeek(now, { weekStartsOn: 1 }).toISOString();
-      const monthISO = startOfMonth(now).toISOString();
-
-      const [total, today, week, month, newCount, recentRes, topCitiesRes, topCatsRes, dailyRes] = await Promise.all([
-        supabase.from("leads").select("*", { count: "exact", head: true }),
-        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", todayISO),
-        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", weekISO),
-        supabase.from("leads").select("*", { count: "exact", head: true }).gte("created_at", monthISO),
-        supabase.from("leads").select("*", { count: "exact", head: true }).eq("status", "new"),
-        supabase.from("leads").select("id,email,full_name,city_name,category_name,status,created_at").order("created_at", { ascending: false }).limit(6),
-        supabase.from("leads").select("city_name").not("city_name", "is", null).order("created_at", { ascending: false }).limit(500),
-        supabase.from("leads").select("category_name").not("category_name", "is", null).order("created_at", { ascending: false }).limit(500),
-        supabase.from("leads").select("created_at").gte("created_at", subDays(now, 14).toISOString()).order("created_at", { ascending: false }),
-      ]);
-
-      // Top 5 cities
-      const cityMap = new Map<string, number>();
-      (topCitiesRes.data ?? []).forEach((l: any) => { cityMap.set(l.city_name, (cityMap.get(l.city_name) || 0) + 1); });
-      const topCities = Array.from(cityMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-      // Top 5 categories
-      const catMap = new Map<string, number>();
-      (topCatsRes.data ?? []).forEach((l: any) => { catMap.set(l.category_name, (catMap.get(l.category_name) || 0) + 1); });
-      const topCategories = Array.from(catMap.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5);
-
-      // Daily chart (14 days)
-      const dailyMap = new Map<string, number>();
-      (dailyRes.data ?? []).forEach((l: any) => {
-        const day = l.created_at.substring(0, 10);
-        dailyMap.set(day, (dailyMap.get(day) || 0) + 1);
-      });
-      const dailyChart: { date: string; count: number }[] = [];
-      for (let i = 13; i >= 0; i--) {
-        const d = subDays(now, i);
-        const key = format(d, "yyyy-MM-dd");
-        dailyChart.push({ date: format(d, "dd/MM"), count: dailyMap.get(key) || 0 });
-      }
-
+      if (!workspace?.id) throw new Error("No workspace");
+      const { data, error } = await supabase.rpc("get_dashboard_aggregates", { p_workspace_id: workspace.id });
+      if (error) throw error;
+      const d = data as any;
       return {
-        total: total.count ?? 0,
-        today: today.count ?? 0,
-        week: week.count ?? 0,
-        month: month.count ?? 0,
-        newLeads: newCount.count ?? 0,
-        recentLeads: recentRes.data ?? [],
-        topCities,
-        topCategories,
-        dailyChart,
+        total: d.total ?? 0,
+        today: d.today ?? 0,
+        week: d.week ?? 0,
+        month: d.month ?? 0,
+        newLeads: d.newLeads ?? 0,
+        recentLeads: d.recentLeads ?? [],
+        topCities: (d.topCities ?? []).map((c: any) => [c.name, c.count]),
+        topCategories: (d.topCategories ?? []).map((c: any) => [c.name, c.count]),
+        dailyChart: d.dailyChart ?? [],
       };
     },
+    enabled: !!workspace?.id,
+    staleTime: 30000,
   });
 }
 
