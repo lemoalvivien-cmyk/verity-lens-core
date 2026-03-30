@@ -75,8 +75,8 @@ const Auth = () => {
               <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
             <div className="text-left">
-              <h1 className="font-mono text-lg font-bold text-foreground tracking-tight">TruthOS</h1>
-              <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Web Intelligence</p>
+              <h1 className="font-mono text-lg font-bold text-foreground tracking-tight">LeadOS</h1>
+              <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Collecte de leads</p>
             </div>
           </div>
           <h2 className="font-mono text-sm text-muted-foreground">
