@@ -53,7 +53,7 @@ const AiMonitors = () => {
         subtitle="Track what AI engines say about your queries"
         icon={<Radio className="w-4 h-4 text-signal-green" />}
         actions={
-          <Link to="/monitors/new">
+          <Link to="/app/monitors/new">
             <Button size="sm" className="bg-primary text-primary-foreground font-mono text-xs gap-1.5">
               <Plus className="w-3.5 h-3.5" /> New AI Monitor
             </Button>
@@ -66,7 +66,7 @@ const AiMonitors = () => {
           icon={Radio}
           title="No AI monitors yet"
           description="Create your first AI search monitor to start tracking what ChatGPT, Gemini, and Perplexity say."
-          action={<Link to="/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
+          action={<Link to="/app/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
         />
       ) : (
         <div className="space-y-2">

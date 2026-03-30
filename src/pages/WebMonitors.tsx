@@ -47,7 +47,7 @@ const WebMonitors = () => {
         subtitle="Track changes on any public web page"
         icon={<Eye className="w-4 h-4 text-signal-blue" />}
         actions={
-          <Link to="/monitors/new">
+          <Link to="/app/monitors/new">
             <Button size="sm" className="bg-primary text-primary-foreground font-mono text-xs gap-1.5">
               <Plus className="w-3.5 h-3.5" /> New Web Monitor
             </Button>
@@ -60,7 +60,7 @@ const WebMonitors = () => {
           icon={Eye}
           title="No web monitors yet"
           description="Start tracking public web pages to detect content changes, pricing updates, and feature releases."
-          action={<Link to="/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
+          action={<Link to="/app/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
         />
       ) : (
         <div className="space-y-2">

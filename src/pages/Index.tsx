@@ -44,7 +44,7 @@ const Index = () => {
         subtitle="Truth at a glance — what changed, what matters, what to act on"
         icon={<LayoutDashboard className="w-4 h-4 text-signal-green" />}
         actions={
-          <Link to="/monitors/new">
+          <Link to="/app/monitors/new">
             <Button size="sm" className="bg-primary text-primary-foreground font-mono text-xs gap-1.5">
               <Plus className="w-3.5 h-3.5" /> New Monitor
             </Button>
@@ -83,14 +83,14 @@ const Index = () => {
               icon={Radio}
               title="No monitors yet"
               description="Create your first monitor to start collecting intelligence."
-              action={<Link to="/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
+              action={<Link to="/app/monitors/new"><Button size="sm" className="font-mono text-xs">Create Monitor</Button></Link>}
             />
           ) : (
             <div className="divide-y divide-border">
               {monitors.slice(0, 6).map((m, i) => (
                 <Link
                   key={m.id}
-                  to={m.type === "ai_query" ? "/ai-monitors" : "/web-monitors"}
+                  to={m.type === "ai_query" ? "/app/ai-monitors" : "/app/web-monitors"}
                 >
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -133,7 +133,7 @@ const Index = () => {
         <div className="xl:col-span-2 bg-card border border-border rounded-lg">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <h3 className="font-mono text-xs font-semibold text-foreground">Recent Alerts</h3>
-            <Link to="/alerts" className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
+            <Link to="/app/alerts" className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
               View all <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
