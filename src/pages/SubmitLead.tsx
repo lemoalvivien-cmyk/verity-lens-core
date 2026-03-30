@@ -192,7 +192,10 @@ const SubmitLead = () => {
             <Checkbox id="consent" checked={form.consent}
               onCheckedChange={(v) => setForm(f => ({ ...f, consent: v === true }))} className="mt-0.5" />
             <Label htmlFor="consent" className="text-xs text-muted-foreground leading-relaxed">
-              J'accepte que mes données soient collectées et traitées conformément à la politique de confidentialité. *
+              J'accepte que mes données soient collectées et traitées conformément à la{" "}
+              <Link to="/privacy" target="_blank" className="underline text-foreground">
+                politique de confidentialité
+              </Link>. *
             </Label>
           </div>
 

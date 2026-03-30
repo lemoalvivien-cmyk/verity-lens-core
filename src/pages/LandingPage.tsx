@@ -138,9 +138,14 @@ const LandingPage = () => {
             <Activity className="w-4 h-4 text-muted-foreground" />
             <span className="font-mono text-xs text-muted-foreground">LeadOS</span>
           </div>
-          <p className="font-mono text-[10px] text-muted-foreground">
-            © {new Date().getFullYear()} LeadOS. Tous droits réservés.
-          </p>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="font-mono text-[10px] text-muted-foreground hover:text-foreground transition-colors">
+              Politique de confidentialité
+            </Link>
+            <p className="font-mono text-[10px] text-muted-foreground">
+              © {new Date().getFullYear()} LeadOS. Tous droits réservés.
+            </p>
+          </div>
         </div>
       </footer>
     </div>
