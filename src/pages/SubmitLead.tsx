@@ -85,6 +85,7 @@ const SubmitLead = () => {
     if (error) {
       toast({ title: "Erreur", description: "Impossible d'envoyer le formulaire.", variant: "destructive" });
     } else {
+      setLastSubmit(Date.now());
       setSubmitted(true);
     }
   };
