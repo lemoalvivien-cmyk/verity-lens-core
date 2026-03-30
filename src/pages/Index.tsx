@@ -133,7 +133,7 @@ const Index = () => {
         <div className="xl:col-span-2 bg-card border border-border rounded-lg">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <h3 className="font-mono text-xs font-semibold text-foreground">Recent Alerts</h3>
-            <Link to="/alerts" className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
+            <Link to="/app/alerts" className="font-mono text-[10px] text-muted-foreground hover:text-foreground flex items-center gap-1">
               View all <ArrowRight className="w-3 h-3" />
             </Link>
           </div>
