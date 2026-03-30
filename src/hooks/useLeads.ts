@@ -97,9 +97,6 @@ export function useDashboardStats() {
     },
   });
 }
-    },
-  });
-}
 
 export function useCities() {
   return useQuery({
