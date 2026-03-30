@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useAllLeads, useDeleteLeads, findDuplicateEmails } from "@/hooks/useLeads";
+import { useLeadsForQuality, useDeleteLeads, findDuplicateEmails } from "@/hooks/useLeads";
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, Trash2, Users, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
