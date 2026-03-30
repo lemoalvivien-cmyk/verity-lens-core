@@ -101,7 +101,7 @@ const Auth = () => {
 
         <div className="flex items-center gap-3">
           <div className="flex-1 h-px bg-border" />
-          <span className="font-mono text-[10px] text-muted-foreground uppercase">or</span>
+          <span className="font-mono text-[10px] text-muted-foreground uppercase">ou</span>
           <div className="flex-1 h-px bg-border" />
         </div>
 
