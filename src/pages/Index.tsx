@@ -44,7 +44,7 @@ const Index = () => {
         subtitle="Truth at a glance — what changed, what matters, what to act on"
         icon={<LayoutDashboard className="w-4 h-4 text-signal-green" />}
         actions={
-          <Link to="/monitors/new">
+          <Link to="/app/monitors/new">
             <Button size="sm" className="bg-primary text-primary-foreground font-mono text-xs gap-1.5">
               <Plus className="w-3.5 h-3.5" /> New Monitor
             </Button>
