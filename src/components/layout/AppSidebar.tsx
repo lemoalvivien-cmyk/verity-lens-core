@@ -44,7 +44,7 @@ const AppSidebar = ({ onNavigate }: AppSidebarProps) => {
   const { user, signOut } = useAuth();
 
   const isActive = (path: string) => {
-    if (path === "/") return location.pathname === "/";
+    if (path === "/app") return location.pathname === "/app";
     return location.pathname.startsWith(path);
   };
 
