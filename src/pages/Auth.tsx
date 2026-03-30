@@ -80,7 +80,7 @@ const Auth = () => {
             </div>
           </div>
           <h2 className="font-mono text-sm text-muted-foreground">
-            {isLogin ? "Sign in to your account" : "Create your account"}
+            {isLogin ? "Connectez-vous à votre compte" : "Créez votre compte"}
           </h2>
         </div>
 
