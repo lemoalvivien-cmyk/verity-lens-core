@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { Activity, Eye, GitCompare, LayoutDashboard, Radio } from "lucide-react";
+import { Activity, Eye, GitCompare, LayoutDashboard, Radio, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
   { to: "/", icon: LayoutDashboard, label: "Command Center" },
@@ -10,6 +11,7 @@ const navItems = [
 
 const AppSidebar = () => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
 
   return (
     <aside className="w-60 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
@@ -50,12 +52,21 @@ const AppSidebar = () => {
         })}
       </nav>
 
-      {/* Status bar */}
-      <div className="p-4 border-t border-sidebar-border">
+      {/* User */}
+      <div className="p-4 border-t border-sidebar-border space-y-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-signal-green animate-pulse-slow" />
-          <span className="font-mono text-xs text-muted-foreground">System Online</span>
+          <span className="font-mono text-xs text-muted-foreground truncate">
+            {user?.email}
+          </span>
         </div>
+        <button
+          onClick={signOut}
+          className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+        >
+          <LogOut className="w-4 h-4" />
+          <span>Déconnexion</span>
+        </button>
       </div>
     </aside>
   );
