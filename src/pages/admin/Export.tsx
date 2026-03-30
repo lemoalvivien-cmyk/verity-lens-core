@@ -119,13 +119,13 @@ const AdminExport = () => {
         ) : (
           <div className="text-center">
             <FileSpreadsheet className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-            <p className="text-2xl font-bold font-mono">{leads.length}</p>
+            <p className="text-2xl font-bold font-mono">{leadsCount}</p>
             <p className="text-sm text-muted-foreground mb-5">leads correspondent aux filtres</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Button onClick={exportCSV} disabled={leads.length === 0} variant="outline" className="font-mono text-sm gap-2">
+              <Button onClick={exportCSV} disabled={leadsCount === 0} variant="outline" className="font-mono text-sm gap-2">
                 <Table2 className="w-4 h-4" /> Export CSV
               </Button>
-              <Button onClick={exportXLSX} disabled={leads.length === 0} className="font-mono text-sm gap-2">
+              <Button onClick={exportXLSX} disabled={leadsCount === 0} className="font-mono text-sm gap-2">
                 <Download className="w-4 h-4" /> Export Excel
               </Button>
             </div>
