@@ -8,7 +8,6 @@ import EmptyState from "@/components/shared/EmptyState";
 import { useMonitors } from "@/hooks/useMonitors";
 import { useAlerts } from "@/hooks/useAlerts";
 import { useEvidence } from "@/hooks/useData";
-import { isAiQueryConfig } from "@/types/models";
 import { formatDistanceToNow } from "date-fns";
 
 const Index = () => {
@@ -89,38 +88,42 @@ const Index = () => {
           ) : (
             <div className="divide-y divide-border">
               {monitors.slice(0, 6).map((m, i) => (
-                <motion.div
+                <Link
                   key={m.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="px-4 py-3 hover:bg-secondary/20 transition-colors cursor-pointer"
+                  to={m.type === "ai_query" ? "/ai-monitors" : "/web-monitors"}
                 >
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      {m.type === "ai_query" ? (
-                        <Radio className="w-3.5 h-3.5 text-signal-green shrink-0" />
-                      ) : (
-                        <Eye className="w-3.5 h-3.5 text-signal-blue shrink-0" />
-                      )}
-                      <p className="text-sm text-foreground truncate">{m.name}</p>
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: i * 0.04 }}
+                    className="px-4 py-3 hover:bg-secondary/20 transition-colors"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        {m.type === "ai_query" ? (
+                          <Radio className="w-3.5 h-3.5 text-signal-green shrink-0" />
+                        ) : (
+                          <Eye className="w-3.5 h-3.5 text-signal-blue shrink-0" />
+                        )}
+                        <p className="text-sm text-foreground truncate">{m.name}</p>
+                      </div>
+                      <StatusBadge status={m.status === "active" ? "active" : m.status === "paused" ? "paused" : "error"} />
                     </div>
-                    <StatusBadge status={m.status === "active" ? "active" : m.status === "paused" ? "paused" : "error"} />
-                  </div>
-                  <div className="flex items-center gap-3 ml-5">
-                    <span className="font-mono text-[10px] text-muted-foreground">
-                      {m.type === "ai_query" ? "AI" : "Web"}
-                    </span>
-                    {m.last_run_at && (
+                    <div className="flex items-center gap-3 ml-5">
                       <span className="font-mono text-[10px] text-muted-foreground">
-                        Last: {formatDistanceToNow(new Date(m.last_run_at), { addSuffix: true })}
+                        {m.type === "ai_query" ? "AI" : "Web"}
                       </span>
-                    )}
-                    <span className="font-mono text-[10px] text-muted-foreground">
-                      Every {m.interval_minutes < 60 ? `${m.interval_minutes}m` : `${m.interval_minutes / 60}h`}
-                    </span>
-                  </div>
-                </motion.div>
+                      {m.last_run_at && (
+                        <span className="font-mono text-[10px] text-muted-foreground">
+                          Last: {formatDistanceToNow(new Date(m.last_run_at), { addSuffix: true })}
+                        </span>
+                      )}
+                      <span className="font-mono text-[10px] text-muted-foreground">
+                        Every {m.interval_minutes < 60 ? `${m.interval_minutes}m` : `${m.interval_minutes / 60}h`}
+                      </span>
+                    </div>
+                  </motion.div>
+                </Link>
               ))}
             </div>
           )}
@@ -148,7 +151,7 @@ const Index = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: i * 0.04 }}
-                  className={`px-4 py-3 hover:bg-secondary/20 transition-colors cursor-pointer ${!a.read ? "" : "opacity-60"}`}
+                  className={`px-4 py-3 ${!a.read ? "" : "opacity-60"}`}
                 >
                   <div className="flex items-start gap-2">
                     <span className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${

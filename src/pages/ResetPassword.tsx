@@ -27,9 +27,9 @@ const ResetPassword = () => {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
-      toast({ title: "Erreur", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Succès", description: "Mot de passe mis à jour." });
+      toast({ title: "Success", description: "Password updated." });
       navigate("/");
     }
   };
@@ -37,7 +37,7 @@ const ResetPassword = () => {
   if (!ready) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <p className="font-mono text-sm text-muted-foreground">Lien invalide ou expiré.</p>
+        <p className="font-mono text-sm text-muted-foreground">Invalid or expired link.</p>
       </div>
     );
   }
@@ -51,11 +51,11 @@ const ResetPassword = () => {
               <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
           </div>
-          <h2 className="font-mono text-sm text-muted-foreground">Nouveau mot de passe</h2>
+          <h2 className="font-mono text-sm text-muted-foreground">Set new password</h2>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="password" className="font-mono text-xs text-muted-foreground">Nouveau mot de passe</Label>
+            <Label htmlFor="password" className="font-mono text-xs text-muted-foreground">New password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)}
@@ -63,7 +63,7 @@ const ResetPassword = () => {
             </div>
           </div>
           <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
-            {loading ? "Mise à jour..." : "Mettre à jour"}
+            {loading ? "Updating..." : "Update password"}
           </Button>
         </form>
       </div>

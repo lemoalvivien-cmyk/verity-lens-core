@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Settings as SettingsIcon, User, Shield, Clock, Loader2 } from "lucide-react";
+import { Settings as SettingsIcon, User, Shield, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,6 @@ const SettingsPage = () => {
   const [workspaceName, setWorkspaceName] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Initialize from data
   const effectiveName = displayName || profile?.display_name || "";
   const effectiveWsName = workspaceName || workspace?.name || "";
 
@@ -98,15 +97,6 @@ const SettingsPage = () => {
             {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" /> : null} Save Workspace
           </Button>
         </div>
-      </motion.div>
-
-      {/* Monitor Defaults */}
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-card border border-border rounded-lg p-5">
-        <div className="flex items-center gap-2 mb-4">
-          <Clock className="w-4 h-4 text-muted-foreground" />
-          <h3 className="font-mono text-xs font-semibold text-foreground uppercase tracking-wider">Monitor Defaults</h3>
-        </div>
-        <p className="font-mono text-xs text-muted-foreground">Default frequency and engine preferences are set per-monitor at creation time.</p>
       </motion.div>
     </div>
   );

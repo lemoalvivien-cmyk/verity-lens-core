@@ -6,18 +6,14 @@ import { useEvidence } from "@/hooks/useData";
 import { formatDistanceToNow } from "date-fns";
 
 const engineColors: Record<string, string> = {
-  ChatGPT: "text-signal-green border-signal-green/30 bg-signal-green/5",
   chatgpt: "text-signal-green border-signal-green/30 bg-signal-green/5",
-  Gemini: "text-signal-blue border-signal-blue/30 bg-signal-blue/5",
   gemini: "text-signal-blue border-signal-blue/30 bg-signal-blue/5",
-  Perplexity: "text-signal-amber border-signal-amber/30 bg-signal-amber/5",
   perplexity: "text-signal-amber border-signal-amber/30 bg-signal-amber/5",
 };
 
 const Compare = () => {
   const { data: evidence = [], isLoading } = useEvidence();
 
-  // Group evidence by run_id (snapshots from the same run can be compared)
   const grouped = evidence.reduce((acc, e) => {
     if (!acc[e.run_id]) acc[e.run_id] = [];
     acc[e.run_id].push(e);
@@ -61,14 +57,17 @@ const Compare = () => {
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-border">
-              {items.map((e) => (
-                <div key={e.id} className={`p-4 ${engineColors[e.source_engine || ""] || "bg-card"}`}>
-                  <p className="font-mono text-xs font-bold mb-2">{e.source_engine || "Unknown"}</p>
-                  <p className="text-sm text-foreground leading-relaxed line-clamp-6">
-                    {e.raw_content?.substring(0, 400) || "No content"}
-                  </p>
-                </div>
-              ))}
+              {items.map((e) => {
+                const engine = (e.source_engine || "").toLowerCase();
+                return (
+                  <div key={e.id} className={`p-4 ${engineColors[engine] || "bg-card"}`}>
+                    <p className="font-mono text-xs font-bold mb-2">{e.source_engine || "Unknown"}</p>
+                    <p className="text-sm text-foreground leading-relaxed line-clamp-6">
+                      {e.raw_content?.substring(0, 400) || "No content"}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </motion.div>
         ))

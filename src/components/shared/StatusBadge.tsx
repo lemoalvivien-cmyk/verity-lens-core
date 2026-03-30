@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 interface StatusBadgeProps {
   status: "active" | "paused" | "error" | "stable" | "changed" | "new";
   size?: "sm" | "md";
