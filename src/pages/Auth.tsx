@@ -162,7 +162,7 @@ const Auth = () => {
             </div>
           )}
           <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
-            {loading ? "Loading..." : isLogin ? "Sign in" : "Create account"}
+            {loading ? "Chargement..." : isLogin ? "Se connecter" : "Créer un compte"}
           </Button>
         </form>
 
