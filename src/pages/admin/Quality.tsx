@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 const AdminQuality = () => {
-  const { data: leads = [], isLoading } = useAllLeads();
+  const { data: leads = [], isLoading } = useLeadsForQuality();
   const deleteLeads = useDeleteLeads();
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
