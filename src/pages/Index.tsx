@@ -90,7 +90,7 @@ const Index = () => {
               {monitors.slice(0, 6).map((m, i) => (
                 <Link
                   key={m.id}
-                  to={m.type === "ai_query" ? "/ai-monitors" : "/web-monitors"}
+                  to={m.type === "ai_query" ? "/app/ai-monitors" : "/app/web-monitors"}
                 >
                   <motion.div
                     initial={{ opacity: 0 }}
