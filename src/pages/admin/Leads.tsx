@@ -42,7 +42,7 @@ const AdminLeads = () => {
   const { toast } = useToast();
 
   const { data: leads = [], isLoading } = useLeads({
-    search: search || undefined,
+    search: debouncedSearch || undefined,
     city_id: filterCity || undefined,
     category_id: filterCategory || undefined,
     status: filterStatus || undefined,
