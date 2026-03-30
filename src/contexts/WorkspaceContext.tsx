@@ -61,7 +61,7 @@ export const WorkspaceProvider = ({ children }: { children: ReactNode }) => {
     const found = workspaces.find((w) => w.id === id);
     if (found) {
       setWorkspace(found);
-      localStorage.setItem("truthos_workspace_id", id);
+      localStorage.setItem("leados_workspace_id", id);
     }
   };
 

@@ -21,7 +21,7 @@ const ForgotPassword = () => {
     });
     setLoading(false);
     if (error) {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Erreur", description: error.message, variant: "destructive" });
     } else {
       setSent(true);
     }
@@ -35,15 +35,19 @@ const ForgotPassword = () => {
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <Activity className="w-5 h-5 text-primary-foreground" />
             </div>
+            <div className="text-left">
+              <h1 className="font-mono text-lg font-bold text-foreground tracking-tight">LeadOS</h1>
+              <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Collecte de leads</p>
+            </div>
           </div>
-          <h2 className="font-mono text-sm text-muted-foreground">Reset your password</h2>
+          <h2 className="font-mono text-sm text-muted-foreground">Réinitialiser votre mot de passe</h2>
         </div>
 
         {sent ? (
           <div className="bg-card border border-border rounded-lg p-5 text-center">
-            <p className="text-sm text-foreground">Email sent! Check your inbox.</p>
+            <p className="text-sm text-foreground">Email envoyé ! Vérifiez votre boîte de réception.</p>
             <Link to="/login" className="font-mono text-xs text-muted-foreground hover:text-foreground mt-3 inline-block">
-              Back to sign in
+              Retour à la connexion
             </Link>
           </div>
         ) : (
@@ -53,14 +57,14 @@ const ForgotPassword = () => {
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="you@example.com" className="pl-10 bg-card border-border font-mono text-sm" required />
+                  placeholder="vous@exemple.com" className="pl-10 bg-card border-border font-mono text-sm" required />
               </div>
             </div>
             <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground font-mono text-sm">
-              {loading ? "Sending..." : "Send reset link"}
+              {loading ? "Envoi..." : "Envoyer le lien"}
             </Button>
             <Link to="/login" className="block text-center font-mono text-xs text-muted-foreground hover:text-foreground">
-              Back to sign in
+              Retour à la connexion
             </Link>
           </form>
         )}
