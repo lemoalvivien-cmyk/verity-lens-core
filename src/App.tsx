@@ -7,21 +7,17 @@ import { WorkspaceProvider } from "@/contexts/WorkspaceContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import AppLayout from "@/components/layout/AppLayout";
 import LandingPage from "./pages/LandingPage";
-import Index from "./pages/Index";
-import AiMonitors from "./pages/AiMonitors";
-import WebMonitors from "./pages/WebMonitors";
-import CreateMonitor from "./pages/CreateMonitor";
-import ResultsFeed from "./pages/ResultsFeed";
-import EvidenceViewer from "./pages/EvidenceViewer";
-import DiffViewer from "./pages/DiffViewer";
-import Compare from "./pages/Compare";
-import SearchWorkspace from "./pages/SearchWorkspace";
-import Alerts from "./pages/Alerts";
-import SettingsPage from "./pages/SettingsPage";
-import ApiDestinations from "./pages/ApiDestinations";
+import SubmitLead from "./pages/SubmitLead";
 import Auth from "./pages/Auth";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminLeads from "./pages/admin/Leads";
+import AdminCities from "./pages/admin/Cities";
+import AdminCategories from "./pages/admin/Categories";
+import AdminTags from "./pages/admin/Tags";
+import AdminExport from "./pages/admin/Export";
+import AdminSearch from "./pages/admin/Search";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,32 +30,26 @@ const App = () => (
         <AuthProvider>
           <WorkspaceProvider>
             <Routes>
-              {/* Public routes */}
+              {/* Public */}
               <Route path="/" element={<LandingPage />} />
+              <Route path="/submit" element={<SubmitLead />} />
               <Route path="/login" element={<Auth />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* Private routes — /app/* */}
+              {/* Private admin cockpit */}
               <Route path="/app" element={
                 <ProtectedRoute>
                   <AppLayout />
                 </ProtectedRoute>
               }>
-                <Route index element={<Index />} />
-                <Route path="ai-monitors" element={<AiMonitors />} />
-                <Route path="web-monitors" element={<WebMonitors />} />
-                <Route path="monitors/new" element={<CreateMonitor />} />
-                <Route path="results" element={<ResultsFeed />} />
-                <Route path="evidence/:id" element={<EvidenceViewer />} />
-                <Route path="evidence" element={<EvidenceViewer />} />
-                <Route path="diffs/:id" element={<DiffViewer />} />
-                <Route path="diffs" element={<DiffViewer />} />
-                <Route path="compare" element={<Compare />} />
-                <Route path="search" element={<SearchWorkspace />} />
-                <Route path="alerts" element={<Alerts />} />
-                <Route path="settings" element={<SettingsPage />} />
-                <Route path="destinations" element={<ApiDestinations />} />
+                <Route index element={<AdminDashboard />} />
+                <Route path="leads" element={<AdminLeads />} />
+                <Route path="cities" element={<AdminCities />} />
+                <Route path="categories" element={<AdminCategories />} />
+                <Route path="tags" element={<AdminTags />} />
+                <Route path="export" element={<AdminExport />} />
+                <Route path="search" element={<AdminSearch />} />
               </Route>
 
               <Route path="*" element={<NotFound />} />
