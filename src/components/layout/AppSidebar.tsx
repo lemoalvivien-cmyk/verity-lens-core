@@ -1,71 +1,122 @@
-import { NavLink, useLocation } from "react-router-dom";
-import { Activity, Eye, GitCompare, LayoutDashboard, Radio, LogOut } from "lucide-react";
+import { NavLink as RouterNavLink, useLocation } from "react-router-dom";
+import {
+  Activity, LayoutDashboard, Radio, Eye, Rss, FileSearch, GitCompare,
+  Search, Bell, Settings, Webhook, LogOut, Plus
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
-const navItems = [
-  { to: "/", icon: LayoutDashboard, label: "Command Center" },
-  { to: "/ai-pulse", icon: Radio, label: "AI Pulse" },
-  { to: "/web-watch", icon: Eye, label: "Web Watch" },
-  { to: "/compare", icon: GitCompare, label: "Compare" },
+const sections = [
+  {
+    label: "Intelligence",
+    items: [
+      { to: "/", icon: LayoutDashboard, label: "Dashboard" },
+      { to: "/ai-monitors", icon: Radio, label: "AI Monitors" },
+      { to: "/web-monitors", icon: Eye, label: "Web Monitors" },
+      { to: "/results", icon: Rss, label: "Results Feed" },
+    ],
+  },
+  {
+    label: "Analyse",
+    items: [
+      { to: "/evidence", icon: FileSearch, label: "Evidence" },
+      { to: "/diffs", icon: GitCompare, label: "Diffs" },
+      { to: "/compare", icon: GitCompare, label: "Compare" },
+      { to: "/search", icon: Search, label: "Search" },
+    ],
+  },
+  {
+    label: "Système",
+    items: [
+      { to: "/alerts", icon: Bell, label: "Alerts" },
+      { to: "/settings", icon: Settings, label: "Settings" },
+      { to: "/destinations", icon: Webhook, label: "API & Destinations" },
+    ],
+  },
 ];
 
 const AppSidebar = () => {
   const location = useLocation();
   const { user, signOut } = useAuth();
 
+  const isActive = (path: string) => {
+    if (path === "/") return location.pathname === "/";
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <aside className="w-60 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
+    <aside className="w-56 h-screen bg-sidebar border-r border-sidebar-border flex flex-col fixed left-0 top-0 z-40">
       {/* Logo */}
-      <div className="p-5 border-b border-sidebar-border">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Activity className="w-4 h-4 text-primary-foreground" />
+      <div className="px-4 py-4 border-b border-sidebar-border">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center">
+            <Activity className="w-3.5 h-3.5 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-mono text-sm font-bold text-foreground tracking-tight">TruthOS</h1>
-            <p className="font-mono text-[10px] text-muted-foreground tracking-widest uppercase">Web Intelligence</p>
+            <h1 className="font-mono text-xs font-bold text-foreground tracking-tight">TruthOS</h1>
+            <p className="font-mono text-[9px] text-muted-foreground tracking-widest uppercase">Intelligence</p>
           </div>
         </div>
       </div>
 
+      {/* Create Monitor CTA */}
+      <div className="px-3 pt-3">
+        <RouterNavLink to="/monitors/new">
+          <Button size="sm" className="w-full bg-primary text-primary-foreground font-mono text-xs h-8 gap-1.5">
+            <Plus className="w-3.5 h-3.5" />
+            New Monitor
+          </Button>
+        </RouterNavLink>
+      </div>
+
       {/* Navigation */}
-      <nav className="flex-1 p-3 space-y-1">
-        {navItems.map((item) => {
-          const isActive = location.pathname === item.to;
-          return (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-150 ${
-                isActive
-                  ? "bg-secondary text-foreground border border-border"
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
-              }`}
-            >
-              <item.icon className={`w-4 h-4 ${isActive ? "text-signal-green" : ""}`} />
-              <span>{item.label}</span>
-              {isActive && (
-                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-signal-green animate-pulse-slow" />
-              )}
-            </NavLink>
-          );
-        })}
+      <nav className="flex-1 overflow-y-auto px-2 pt-3 pb-2">
+        {sections.map((section) => (
+          <div key={section.label} className="mb-3">
+            <p className="px-3 mb-1 font-mono text-[9px] text-muted-foreground uppercase tracking-widest">
+              {section.label}
+            </p>
+            <div className="space-y-0.5">
+              {section.items.map((item) => {
+                const active = isActive(item.to);
+                return (
+                  <RouterNavLink
+                    key={item.to}
+                    to={item.to}
+                    className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md text-[13px] font-medium transition-all duration-100 ${
+                      active
+                        ? "bg-secondary text-foreground"
+                        : "text-muted-foreground hover:text-foreground hover:bg-secondary/40"
+                    }`}
+                  >
+                    <item.icon className={`w-3.5 h-3.5 shrink-0 ${active ? "text-signal-green" : ""}`} />
+                    <span className="truncate">{item.label}</span>
+                  </RouterNavLink>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* User */}
-      <div className="p-4 border-t border-sidebar-border space-y-3">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-signal-green animate-pulse-slow" />
-          <span className="font-mono text-xs text-muted-foreground truncate">
+      <div className="px-3 py-3 border-t border-sidebar-border">
+        <div className="flex items-center gap-2 px-2 mb-2">
+          <div className="w-5 h-5 rounded-full bg-secondary flex items-center justify-center">
+            <span className="font-mono text-[9px] text-foreground uppercase">
+              {user?.email?.[0] || "?"}
+            </span>
+          </div>
+          <span className="font-mono text-[11px] text-muted-foreground truncate flex-1">
             {user?.email}
           </span>
         </div>
         <button
           onClick={signOut}
-          className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-sm text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors"
+          className="flex items-center gap-2 w-full px-2 py-1.5 rounded-md text-[12px] text-muted-foreground hover:text-foreground hover:bg-secondary/40 transition-colors"
         >
-          <LogOut className="w-4 h-4" />
-          <span>Déconnexion</span>
+          <LogOut className="w-3.5 h-3.5" />
+          <span>Sign out</span>
         </button>
       </div>
     </aside>
