@@ -1,28 +1,31 @@
 import { useState } from "react";
-import { Search, FileSearch, Radio, Eye, Clock } from "lucide-react";
+import { Search, FileSearch, Radio, Eye, Clock, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import PageHeader from "@/components/shared/PageHeader";
 import EmptyState from "@/components/shared/EmptyState";
-
-const mockResults = [
-  { id: "1", type: "ai_query" as const, content: "HubSpot CRM is recommended as the best free CRM for startups with excellent marketing automation integration.", monitor: "Brand mentions", source: "ChatGPT", captured: "3m ago" },
-  { id: "2", type: "web_watch" as const, content: "Enterprise plan pricing updated to $399/mo. New Scale tier introduced at $199/mo with limited seats.", monitor: "Competitor Pricing", source: "competitor.com", captured: "18m ago" },
-  { id: "3", type: "ai_query" as const, content: "Perplexity now cites TechCrunch March 2026 article as primary source for CRM tool recommendations.", monitor: "Product queries", source: "Perplexity", captured: "1h ago" },
-  { id: "4", type: "web_watch" as const, content: "New /v2/webhooks endpoint added to API documentation with POST method and event type filtering.", monitor: "API Docs", source: "docs.example.com", captured: "2h ago" },
-];
+import { useEvidence } from "@/hooks/useData";
+import { formatDistanceToNow } from "date-fns";
 
 const SearchWorkspace = () => {
   const [query, setQuery] = useState("");
-  const filtered = query.length > 0
-    ? mockResults.filter((r) => r.content.toLowerCase().includes(query.toLowerCase()))
+  const { data: evidence = [], isLoading } = useEvidence();
+
+  // Client-side search over evidence content
+  const filtered = query.length > 1
+    ? evidence.filter((e) =>
+        (e.raw_content?.toLowerCase().includes(query.toLowerCase())) ||
+        (e.source_engine?.toLowerCase().includes(query.toLowerCase())) ||
+        (e.source_url?.toLowerCase().includes(query.toLowerCase()))
+      )
     : [];
 
   return (
     <div className="space-y-5 animate-fade-in">
       <PageHeader
         title="Search"
-        subtitle="Full-text search across all collected evidence and results"
+        subtitle="Full-text search across all collected evidence"
         icon={<Search className="w-4 h-4 text-foreground" />}
       />
 
@@ -37,47 +40,41 @@ const SearchWorkspace = () => {
         />
       </div>
 
-      {query.length === 0 ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center h-32"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>
+      ) : query.length <= 1 ? (
         <EmptyState
           icon={Search}
           title="Search your workspace"
-          description="Type to search across all monitors, evidence, and results. Every piece of collected data is searchable."
+          description={evidence.length > 0
+            ? `Type at least 2 characters to search across ${evidence.length} evidence snapshots.`
+            : "No data to search yet. Create monitors and run them to start collecting intelligence."}
         />
       ) : filtered.length === 0 ? (
-        <EmptyState
-          icon={Search}
-          title="No results found"
-          description={`No matches for "${query}". Try different keywords.`}
-        />
+        <EmptyState icon={Search} title="No results found" description={`No matches for "${query}". Try different keywords.`} />
       ) : (
         <div className="space-y-2">
           <p className="font-mono text-[10px] text-muted-foreground">{filtered.length} results</p>
-          {filtered.map((r, i) => (
+          {filtered.map((e, i) => (
             <motion.div
-              key={r.id}
+              key={e.id}
               initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              className="bg-card border border-border rounded-lg p-4 hover:border-border/80 transition-colors cursor-pointer"
+              className="bg-card border border-border rounded-lg p-4 hover:border-border/80 transition-colors"
             >
               <div className="flex items-center gap-2 mb-2">
-                {r.type === "ai_query" ? (
-                  <Radio className="w-3.5 h-3.5 text-signal-green" />
-                ) : (
-                  <Eye className="w-3.5 h-3.5 text-signal-blue" />
-                )}
-                <span className="font-mono text-[10px] text-muted-foreground">{r.monitor}</span>
-                <span className="font-mono text-[10px] text-muted-foreground">·</span>
-                <span className="font-mono text-[10px] text-muted-foreground">{r.source}</span>
+                {e.source_engine ? <Radio className="w-3.5 h-3.5 text-signal-green" /> : <Eye className="w-3.5 h-3.5 text-signal-blue" />}
+                <span className="font-mono text-[10px] text-muted-foreground">{e.source_engine || e.source_url || "Unknown"}</span>
                 <span className="ml-auto font-mono text-[10px] text-muted-foreground flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {r.captured}
+                  <Clock className="w-3 h-3" /> {formatDistanceToNow(new Date(e.captured_at), { addSuffix: true })}
                 </span>
               </div>
-              <p className="text-sm text-foreground">{r.content}</p>
+              <p className="text-sm text-foreground line-clamp-3">{e.raw_content?.substring(0, 300)}</p>
               <div className="mt-2">
-                <span className="font-mono text-[10px] text-signal-green hover:underline cursor-pointer flex items-center gap-1 w-fit">
+                <Link to={`/evidence/${e.id}`} className="font-mono text-[10px] text-signal-green hover:underline flex items-center gap-1 w-fit">
                   <FileSearch className="w-3 h-3" /> View evidence
-                </span>
+                </Link>
               </div>
             </motion.div>
           ))}
