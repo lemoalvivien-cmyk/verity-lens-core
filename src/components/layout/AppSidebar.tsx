@@ -65,7 +65,7 @@ const AppSidebar = ({ onNavigate }: AppSidebarProps) => {
 
       {/* Create Monitor CTA */}
       <div className="px-3 pt-3">
-        <RouterNavLink to="/monitors/new" onClick={onNavigate}>
+        <RouterNavLink to="/app/monitors/new" onClick={onNavigate}>
           <Button size="sm" className="w-full bg-primary text-primary-foreground font-mono text-xs h-8 gap-1.5">
             <Plus className="w-3.5 h-3.5" />
             New Monitor
