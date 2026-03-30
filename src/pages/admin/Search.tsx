@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useLeads } from "@/hooks/useLeads";
 import { Input } from "@/components/ui/input";
-import { Search as SearchIcon, MapPin, Mail, Loader2 } from "lucide-react";
+import { Search as SearchIcon, MapPin, Mail, Loader2, ChevronRight } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 
