@@ -19,6 +19,7 @@ const SubmitLead = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lastSubmit, setLastSubmit] = useState(0);
   const { toast } = useToast();
 
   const [form, setForm] = useState({
@@ -30,6 +31,7 @@ const SubmitLead = () => {
     category_id: searchParams.get("category") || "",
     message: "",
     consent: false,
+    website: "",
   });
 
   useEffect(() => {
@@ -39,10 +41,24 @@ const SubmitLead = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.website) return;
+
     if (!form.consent) {
       toast({ title: "Consentement requis", description: "Veuillez accepter les conditions.", variant: "destructive" });
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(form.email.trim())) {
+      toast({ title: "Email invalide", description: "Veuillez entrer un email valide.", variant: "destructive" });
+      return;
+    }
+
+    if (Date.now() - lastSubmit < 30000) {
+      toast({ title: "Trop rapide", description: "Veuillez patienter 30 secondes.", variant: "destructive" });
+      return;
+    }
+
     if (!form.email.trim()) return;
 
     setLoading(true);
@@ -69,6 +85,7 @@ const SubmitLead = () => {
     if (error) {
       toast({ title: "Erreur", description: "Impossible d'envoyer le formulaire.", variant: "destructive" });
     } else {
+      setLastSubmit(Date.now());
       setSubmitted(true);
     }
   };
@@ -114,6 +131,10 @@ const SubmitLead = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="absolute opacity-0 top-0 left-0 h-0 w-0 z-[-1]">
+            <Input type="text" name="website" tabIndex={-1} autoComplete="off" value={form.website}
+              onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="font-mono text-xs">Email *</Label>
