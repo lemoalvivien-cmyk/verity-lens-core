@@ -158,7 +158,7 @@ const AdminLeads = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {leads.map(lead => (
+              {paginatedLeads.map(lead => (
                 <tr key={lead.id} className="hover:bg-secondary/20 transition-colors cursor-pointer" onClick={() => openDetail(lead.id)}>
                   <td className="px-4 py-3">
                     <p className="font-medium truncate max-w-[200px]">{lead.full_name || "—"}</p>
