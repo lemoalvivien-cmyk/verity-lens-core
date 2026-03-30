@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useLeads, useCities, useCategories, useTags, useUpdateLead, useDeleteLead, useLeadTags, useAddLeadTag, useRemoveLeadTag, useLogLeadEvent, useLeadEvents } from "@/hooks/useLeads";
 import { supabase } from "@/integrations/supabase/client";
