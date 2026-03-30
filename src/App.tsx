@@ -38,6 +38,7 @@ const App = () => (
               <Route path="/login" element={<Auth />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
 
               {/* Private admin cockpit */}
               <Route path="/app" element={
