@@ -1,13 +1,19 @@
 import { useMemo, useState } from "react";
 import { useLeadsForQuality, useDeleteLeads, findDuplicateEmails } from "@/hooks/useLeads";
 import { Button } from "@/components/ui/button";
-import { Loader2, AlertTriangle, Trash2, Users, Shield } from "lucide-react";
+import { Loader2, AlertTriangle, Trash2, Users, Shield, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+
+const PAGE_SIZE = 200;
 
 const AdminQuality = () => {
-  const { data: leads = [], isLoading } = useLeadsForQuality();
+  const [page, setPage] = useState(0);
+  const { data, isLoading } = useLeadsForQuality(page);
+  const leads = data?.leads ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
   const deleteLeads = useDeleteLeads();
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
@@ -58,11 +64,11 @@ const AdminQuality = () => {
             <p className="font-mono text-[10px] text-muted-foreground uppercase">Total leads</p>
             <Users className="w-4 h-4 text-muted-foreground" />
           </div>
-          <p className="font-mono text-2xl font-bold">{leads.length}</p>
+          <p className="font-mono text-2xl font-bold">{total}</p>
         </div>
         <div className={`bg-card border rounded-lg p-4 ${duplicates.length > 0 ? "border-signal-amber/30" : "border-border"}`}>
           <div className="flex items-center justify-between mb-2">
-            <p className="font-mono text-[10px] text-muted-foreground uppercase">Emails en doublon</p>
+            <p className="font-mono text-[10px] text-muted-foreground uppercase">Doublons (page)</p>
             <AlertTriangle className={`w-4 h-4 ${duplicates.length > 0 ? "text-signal-amber" : "text-muted-foreground"}`} />
           </div>
           <p className="font-mono text-2xl font-bold">{duplicates.length}</p>
@@ -79,12 +85,27 @@ const AdminQuality = () => {
         </div>
       </div>
 
+      {/* Pagination */}
+      <div className="flex items-center justify-between">
+        <p className="font-mono text-xs text-muted-foreground">
+          Page {page + 1} / {totalPages} — {total} leads
+        </p>
+        <div className="flex items-center gap-1">
+          <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage(p => p - 1)} className="h-7 w-7 p-0">
+            <ChevronLeft className="w-3.5 h-3.5" />
+          </Button>
+          <Button variant="outline" size="sm" disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} className="h-7 w-7 p-0">
+            <ChevronRight className="w-3.5 h-3.5" />
+          </Button>
+        </div>
+      </div>
+
       {/* Duplicates */}
       {duplicates.length === 0 ? (
         <div className="bg-card border border-border rounded-lg px-4 py-12 text-center">
           <Shield className="w-10 h-10 text-signal-green mx-auto mb-3" />
-          <p className="text-sm font-medium">Aucun doublon détecté</p>
-          <p className="text-xs text-muted-foreground mt-1">Votre base est propre</p>
+          <p className="text-sm font-medium">Aucun doublon détecté sur cette page</p>
+          <p className="text-xs text-muted-foreground mt-1">Naviguez entre les pages pour vérifier</p>
         </div>
       ) : (
         <>

@@ -93,14 +93,17 @@ export function useLeadCountsByFieldRecent(field: "city_id" | "category_id") {
   });
 }
 
-// For Quality page - fetch only id, email, full_name, created_at, city_name for duplicate detection
-export function useLeadsForQuality() {
+export function useLeadsForQuality(page: number = 0) {
   return useQuery({
-    queryKey: ["leads-quality"],
+    queryKey: ["leads-quality", page],
     queryFn: async () => {
-      const { data, error } = await supabase.from("leads").select("id,email,full_name,created_at,city_name").order("created_at", { ascending: true });
+      const PAGE_SIZE = 200;
+      const { data, error, count } = await supabase.from("leads")
+        .select("id,email,full_name,created_at,city_name", { count: "exact" })
+        .order("created_at", { ascending: true })
+        .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1);
       if (error) throw error;
-      return data ?? [];
+      return { leads: data ?? [], total: count ?? 0 };
     },
   });
 }
