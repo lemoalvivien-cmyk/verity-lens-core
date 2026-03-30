@@ -14,105 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      alerts: {
-        Row: {
-          created_at: string
-          diff_id: string | null
-          id: string
-          message: string | null
-          monitor_id: string | null
-          read: boolean
-          severity: Database["public"]["Enums"]["alert_severity"]
-          title: string
-          workspace_id: string
-        }
-        Insert: {
-          created_at?: string
-          diff_id?: string | null
-          id?: string
-          message?: string | null
-          monitor_id?: string | null
-          read?: boolean
-          severity?: Database["public"]["Enums"]["alert_severity"]
-          title: string
-          workspace_id: string
-        }
-        Update: {
-          created_at?: string
-          diff_id?: string | null
-          id?: string
-          message?: string | null
-          monitor_id?: string | null
-          read?: boolean
-          severity?: Database["public"]["Enums"]["alert_severity"]
-          title?: string
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "alerts_diff_id_fkey"
-            columns: ["diff_id"]
-            isOneToOne: false
-            referencedRelation: "snapshot_diffs"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "alerts_monitor_id_fkey"
-            columns: ["monitor_id"]
-            isOneToOne: false
-            referencedRelation: "monitors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "alerts_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      audit_log: {
-        Row: {
-          action: string
-          created_at: string
-          entity_id: string | null
-          entity_type: string | null
-          id: string
-          metadata: Json | null
-          user_id: string | null
-          workspace_id: string | null
-        }
-        Insert: {
-          action: string
-          created_at?: string
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string
-          metadata?: Json | null
-          user_id?: string | null
-          workspace_id?: string | null
-        }
-        Update: {
-          action?: string
-          created_at?: string
-          entity_id?: string | null
-          entity_type?: string | null
-          id?: string
-          metadata?: Json | null
-          user_id?: string | null
-          workspace_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "audit_log_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       categories: {
         Row: {
           created_at: string
@@ -169,53 +70,6 @@ export type Database = {
           slug?: string
         }
         Relationships: []
-      }
-      evidence_snapshots: {
-        Row: {
-          captured_at: string
-          content_hash: string
-          id: string
-          metadata: Json | null
-          monitor_id: string
-          raw_content: string | null
-          run_id: string
-          source_engine: string | null
-          source_url: string | null
-          structured_data: Json | null
-        }
-        Insert: {
-          captured_at?: string
-          content_hash: string
-          id?: string
-          metadata?: Json | null
-          monitor_id: string
-          raw_content?: string | null
-          run_id?: string
-          source_engine?: string | null
-          source_url?: string | null
-          structured_data?: Json | null
-        }
-        Update: {
-          captured_at?: string
-          content_hash?: string
-          id?: string
-          metadata?: Json | null
-          monitor_id?: string
-          raw_content?: string | null
-          run_id?: string
-          source_engine?: string | null
-          source_url?: string | null
-          structured_data?: Json | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "evidence_snapshots_monitor_id_fkey"
-            columns: ["monitor_id"]
-            isOneToOne: false
-            referencedRelation: "monitors"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       exports_log: {
         Row: {
@@ -332,6 +186,7 @@ export type Database = {
           source_page: string
           status: Database["public"]["Enums"]["lead_status"]
           updated_at: string
+          workspace_id: string | null
         }
         Insert: {
           category_id?: string | null
@@ -352,6 +207,7 @@ export type Database = {
           source_page?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Update: {
           category_id?: string | null
@@ -372,6 +228,7 @@ export type Database = {
           source_page?: string
           status?: Database["public"]["Enums"]["lead_status"]
           updated_at?: string
+          workspace_id?: string | null
         }
         Relationships: [
           {
@@ -388,54 +245,8 @@ export type Database = {
             referencedRelation: "cities"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      monitors: {
-        Row: {
-          config: Json
-          created_at: string
-          created_by: string | null
-          id: string
-          interval_minutes: number
-          last_run_at: string | null
-          name: string
-          next_run_at: string | null
-          status: Database["public"]["Enums"]["monitor_status"]
-          type: Database["public"]["Enums"]["monitor_type"]
-          updated_at: string
-          workspace_id: string
-        }
-        Insert: {
-          config?: Json
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          interval_minutes?: number
-          last_run_at?: string | null
-          name: string
-          next_run_at?: string | null
-          status?: Database["public"]["Enums"]["monitor_status"]
-          type: Database["public"]["Enums"]["monitor_type"]
-          updated_at?: string
-          workspace_id: string
-        }
-        Update: {
-          config?: Json
-          created_at?: string
-          created_by?: string | null
-          id?: string
-          interval_minutes?: number
-          last_run_at?: string | null
-          name?: string
-          next_run_at?: string | null
-          status?: Database["public"]["Enums"]["monitor_status"]
-          type?: Database["public"]["Enums"]["monitor_type"]
-          updated_at?: string
-          workspace_id?: string
-        }
-        Relationships: [
           {
-            foreignKeyName: "monitors_workspace_id_fkey"
+            foreignKeyName: "leads_workspace_id_fkey"
             columns: ["workspace_id"]
             isOneToOne: false
             referencedRelation: "workspaces"
@@ -469,119 +280,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
-      }
-      search_entries: {
-        Row: {
-          captured_at: string
-          content: string
-          engine: string | null
-          id: string
-          monitor_id: string | null
-          snapshot_id: string | null
-          source: string | null
-          tsv: unknown
-          workspace_id: string
-        }
-        Insert: {
-          captured_at?: string
-          content: string
-          engine?: string | null
-          id?: string
-          monitor_id?: string | null
-          snapshot_id?: string | null
-          source?: string | null
-          tsv?: unknown
-          workspace_id: string
-        }
-        Update: {
-          captured_at?: string
-          content?: string
-          engine?: string | null
-          id?: string
-          monitor_id?: string | null
-          snapshot_id?: string | null
-          source?: string | null
-          tsv?: unknown
-          workspace_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "search_entries_monitor_id_fkey"
-            columns: ["monitor_id"]
-            isOneToOne: false
-            referencedRelation: "monitors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "search_entries_snapshot_id_fkey"
-            columns: ["snapshot_id"]
-            isOneToOne: false
-            referencedRelation: "evidence_snapshots"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "search_entries_workspace_id_fkey"
-            columns: ["workspace_id"]
-            isOneToOne: false
-            referencedRelation: "workspaces"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      snapshot_diffs: {
-        Row: {
-          created_at: string
-          diff_data: Json
-          diff_type: Database["public"]["Enums"]["diff_type"]
-          id: string
-          monitor_id: string
-          significance: number
-          snapshot_a_id: string
-          snapshot_b_id: string
-        }
-        Insert: {
-          created_at?: string
-          diff_data?: Json
-          diff_type: Database["public"]["Enums"]["diff_type"]
-          id?: string
-          monitor_id: string
-          significance?: number
-          snapshot_a_id: string
-          snapshot_b_id: string
-        }
-        Update: {
-          created_at?: string
-          diff_data?: Json
-          diff_type?: Database["public"]["Enums"]["diff_type"]
-          id?: string
-          monitor_id?: string
-          significance?: number
-          snapshot_a_id?: string
-          snapshot_b_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "snapshot_diffs_monitor_id_fkey"
-            columns: ["monitor_id"]
-            isOneToOne: false
-            referencedRelation: "monitors"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "snapshot_diffs_snapshot_a_id_fkey"
-            columns: ["snapshot_a_id"]
-            isOneToOne: false
-            referencedRelation: "evidence_snapshots"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "snapshot_diffs_snapshot_b_id_fkey"
-            columns: ["snapshot_b_id"]
-            isOneToOne: false
-            referencedRelation: "evidence_snapshots"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       tags: {
         Row: {
@@ -675,11 +373,7 @@ export type Database = {
       }
     }
     Enums: {
-      alert_severity: "info" | "warning" | "critical"
-      diff_type: "added" | "removed" | "changed" | "semantic"
       lead_status: "new" | "contacted" | "qualified" | "converted" | "archived"
-      monitor_status: "active" | "paused" | "error"
-      monitor_type: "ai_query" | "web_watch"
       workspace_role: "owner" | "admin" | "member" | "viewer"
     }
     CompositeTypes: {
@@ -808,11 +502,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      alert_severity: ["info", "warning", "critical"],
-      diff_type: ["added", "removed", "changed", "semantic"],
       lead_status: ["new", "contacted", "qualified", "converted", "archived"],
-      monitor_status: ["active", "paused", "error"],
-      monitor_type: ["ai_query", "web_watch"],
       workspace_role: ["owner", "admin", "member", "viewer"],
     },
   },
