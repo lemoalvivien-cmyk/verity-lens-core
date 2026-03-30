@@ -41,10 +41,24 @@ const SubmitLead = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (form.website) return;
+
     if (!form.consent) {
       toast({ title: "Consentement requis", description: "Veuillez accepter les conditions.", variant: "destructive" });
       return;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    if (!emailRegex.test(form.email.trim())) {
+      toast({ title: "Email invalide", description: "Veuillez entrer un email valide.", variant: "destructive" });
+      return;
+    }
+
+    if (Date.now() - lastSubmit < 30000) {
+      toast({ title: "Trop rapide", description: "Veuillez patienter 30 secondes.", variant: "destructive" });
+      return;
+    }
+
     if (!form.email.trim()) return;
 
     setLoading(true);
