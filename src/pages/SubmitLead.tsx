@@ -131,6 +131,10 @@ const SubmitLead = () => {
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          <div className="absolute opacity-0 top-0 left-0 h-0 w-0 z-[-1]">
+            <Input type="text" name="website" tabIndex={-1} autoComplete="off" value={form.website}
+              onChange={e => setForm(f => ({ ...f, website: e.target.value }))} />
+          </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label className="font-mono text-xs">Email *</Label>
