@@ -1,17 +1,17 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { useCities, useAllLeads } from "@/hooks/useLeads";
+import { useCities, useLeadCountsByField, useLeadCountsByFieldRecent } from "@/hooks/useLeads";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { MapPin, Plus, Trash2, Loader2, Users, TrendingUp } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { subDays } from "date-fns";
 
 const AdminCities = () => {
   const { data: cities = [], isLoading } = useCities();
-  const { data: leads = [] } = useAllLeads();
+  const { data: cityTotals } = useLeadCountsByField("city_id");
+  const { data: cityRecent } = useLeadCountsByFieldRecent("city_id");
   const [name, setName] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [region, setRegion] = useState("");
@@ -19,22 +19,16 @@ const AdminCities = () => {
   const qc = useQueryClient();
   const { toast } = useToast();
 
-  const cityStats = useMemo(() => {
-    const sevenDaysAgo = subDays(new Date(), 7);
-    const map = new Map<string, { total: number; recent: number }>();
-    leads.forEach(l => {
-      if (!l.city_id) return;
-      if (!map.has(l.city_id)) map.set(l.city_id, { total: 0, recent: 0 });
-      const entry = map.get(l.city_id)!;
-      entry.total++;
-      if (new Date(l.created_at) >= sevenDaysAgo) entry.recent++;
-    });
-    return map;
-  }, [leads]);
+  const totalGeoLeads = useMemo(() => {
+    if (!cityTotals) return 0;
+    let sum = 0;
+    cityTotals.forEach(v => sum += v);
+    return sum;
+  }, [cityTotals]);
 
   const sortedCities = useMemo(() => {
-    return [...cities].sort((a, b) => (cityStats.get(b.id)?.total || 0) - (cityStats.get(a.id)?.total || 0));
-  }, [cities, cityStats]);
+    return [...cities].sort((a, b) => (cityTotals?.get(b.id) || 0) - (cityTotals?.get(a.id) || 0));
+  }, [cities, cityTotals]);
 
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +54,7 @@ const AdminCities = () => {
     <div className="space-y-6 animate-fade-in">
       <div>
         <h1 className="text-xl font-bold">Villes</h1>
-        <p className="text-sm text-muted-foreground">{cities.length} villes · {leads.filter(l => l.city_id).length} leads géolocalisés</p>
+        <p className="text-sm text-muted-foreground">{cities.length} villes · {totalGeoLeads} leads géolocalisés</p>
       </div>
 
       <form onSubmit={handleAdd} className="flex flex-wrap gap-2">
@@ -95,7 +89,8 @@ const AdminCities = () => {
             </thead>
             <tbody className="divide-y divide-border">
               {sortedCities.map(city => {
-                const stats = cityStats.get(city.id) || { total: 0, recent: 0 };
+                const total = cityTotals?.get(city.id) || 0;
+                const recent = cityRecent?.get(city.id) || 0;
                 return (
                   <tr key={city.id} className="hover:bg-secondary/20 transition-colors">
                     <td className="px-4 py-3">
@@ -109,13 +104,13 @@ const AdminCities = () => {
                     </td>
                     <td className="px-4 py-3 text-right">
                       <Link to={`/app/leads?city=${city.id}`} className="font-mono text-sm font-semibold hover:text-signal-green transition-colors flex items-center justify-end gap-1">
-                        <Users className="w-3 h-3" /> {stats.total}
+                        <Users className="w-3 h-3" /> {total}
                       </Link>
                     </td>
                     <td className="px-4 py-3 text-right hidden sm:table-cell">
-                      <span className={`font-mono text-xs flex items-center justify-end gap-1 ${stats.recent > 0 ? "text-signal-green" : "text-muted-foreground"}`}>
-                        {stats.recent > 0 && <TrendingUp className="w-3 h-3" />}
-                        +{stats.recent}
+                      <span className={`font-mono text-xs flex items-center justify-end gap-1 ${recent > 0 ? "text-signal-green" : "text-muted-foreground"}`}>
+                        {recent > 0 && <TrendingUp className="w-3 h-3" />}
+                        +{recent}
                       </span>
                     </td>
                     <td className="px-4 py-3">

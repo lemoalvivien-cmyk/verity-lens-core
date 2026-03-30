@@ -51,9 +51,8 @@ const AdminExport = () => {
 
   const exportXLSX = () => {
     if (leads.length === 0) return;
-    // Build a simple XLSX-compatible XML (SpreadsheetML)
     const headers = ["Email", "Nom", "Téléphone", "Ville", "Code postal", "Catégorie", "Statut", "Message", "Source", "Consentement", "Date"];
-    const rows = leads.map(l => [
+    const rows = leads.map((l: any) => [
       l.email, l.full_name || "", l.phone || "", l.city_name || "", l.postal_code || "",
       l.category_name || "", l.status, (l.message || "").replace(/\n/g, " "), l.source_page || "",
       l.consent ? "Oui" : "Non", new Date(l.created_at).toLocaleString("fr-FR"),
@@ -70,8 +69,8 @@ const AdminExport = () => {
 
     const blob = new Blob([xml], { type: "application/vnd.ms-excel" });
     downloadBlob(blob, `leads_export_${format(new Date(), "yyyy-MM-dd_HHmm")}.xls`);
-    logExport.mutate({ export_type: "xlsx", filters, row_count: leads.length });
-    toast({ title: "Export Excel", description: `${leads.length} leads exportés.` });
+    logExport.mutate({ export_type: "xlsx", filters, row_count: leadsCount });
+    toast({ title: "Export Excel", description: `${leadsCount} leads exportés.` });
   };
 
   return (
